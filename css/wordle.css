@@ -1,0 +1,234 @@
+/* Theme Overrides */
+#wordle-game-body {
+    --bg-color: #f0fdf4;
+    --button-bg: #10b981;
+    --button-hover: #34d399;
+    --accent: #10b981;
+}
+
+#wordle-game-body.dark-mode {
+    --bg-color: #064e3b;
+    --surface-bg: rgba(6, 95, 70, 0.5);
+    --button-bg: #10b981;
+    --button-hover: #34d399;
+    --accent: #34d399;
+}
+
+.game-container {
+    width: 100%;
+    max-width: 500px;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+}
+
+.game-header {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 12px 20px;
+    height: var(--header-height, 60px);
+    flex-shrink: 0;
+}
+
+.game-header h1 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--text-color);
+    letter-spacing: 1px;
+    text-align: center;
+}
+
+.back-button {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.header-controls {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.hint-btn {
+    background: var(--surface-bg);
+    border: 1.5px solid var(--surface-border);
+    color: var(--text-color);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: var(--surface-shadow);
+    transition: all 0.2s ease;
+    backdrop-filter: blur(8px);
+    user-select: none;
+}
+
+.hint-btn:hover {
+    transform: scale(1.05);
+    background: var(--key-hover);
+    border-color: #f59e0b;
+}
+
+.hint-btn:active {
+    transform: scale(0.95);
+}
+
+.hint-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
+    filter: grayscale(1);
+}
+
+#hint-count {
+    background: #f59e0b;
+    color: #ffffff;
+    border-radius: 10px;
+    padding: 1px 7px;
+    font-size: 0.85rem;
+    font-weight: 800;
+}
+
+#board-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+    overflow: hidden;
+    padding: 10px;
+    position: relative;
+}
+
+#board {
+    display: grid;
+    grid-template-rows: repeat(6, 1fr);
+    grid-gap: clamp(4px, 1.5vw, 8px);
+    width: 100%;
+    max-width: 350px;
+    height: 100%;
+    max-height: 420px;
+    aspect-ratio: 5/6;
+}
+
+.tile-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-gap: clamp(4px, 1.5vw, 8px);
+}
+
+.tile {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: clamp(24px, 6vw, 36px);
+    font-weight: 700;
+    box-sizing: border-box;
+    color: var(--text-color);
+    text-transform: uppercase;
+    border: 2px solid var(--surface-border);
+    background: var(--surface-bg);
+    border-radius: 8px;
+    transition: transform 0.2s, background-color 0.3s, border-color 0.3s;
+    box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.tile[data-state="active"] {
+    border-color: var(--text-color);
+    transform: scale(1.05);
+}
+
+.tile[data-state="correct"] {
+    background-color: var(--color-correct);
+    border-color: var(--color-correct);
+    color: white;
+}
+
+.tile[data-state="present"] {
+    background-color: var(--color-present);
+    border-color: var(--color-present);
+    color: white;
+}
+
+.tile[data-state="absent"] {
+    background-color: var(--color-absent);
+    border-color: var(--color-absent);
+    color: white;
+}
+
+/* Animations */
+@keyframes pop {
+    0% {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+
+    40% {
+        transform: scale(1.1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.tile.pop {
+    animation: pop 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes flip {
+    0% {
+        transform: rotateX(0);
+    }
+
+    50% {
+        transform: rotateX(-90deg);
+    }
+
+    100% {
+        transform: rotateX(0);
+    }
+}
+
+.tile.flip {
+    animation: flip 0.6s ease-in;
+}
+
+.message-restart-btn {
+    display: block;
+    margin: 15px auto 0;
+    padding: 10px 20px;
+    background: var(--button-bg);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.2s;
+}
+
+.message-restart-btn:hover {
+    background: var(--button-hover);
+    transform: scale(1.05);
+}
+
+.message-restart-btn:active {
+    transform: scale(0.95);
+}

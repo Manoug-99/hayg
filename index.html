@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="hy">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Հայկ</title>
+    <meta name="description" lang="hy" content="Հայկ (Hayg)՝ արեւմտահայերէն խաղերու հարթակ։ Խաղա՛ հայերէն Wordle՝ Բառիկ, եւ բացայայտէ՛ բառախաղեր։">
+    <meta name="description" lang="en" content="Hayg (Հայկ) is home to Western Armenian games, including Armenian Wordle (Բառիկ) and fun word games. Visit hayg.net and play in Armenian.">
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Armenian:wght@300;400;600;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/messaging.css">
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#8b5cf6">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="pics/logo.png">
+    <link rel="icon" type="image/svg+xml" href="pics/logo.svg">
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // Failsafe: hide loader after 3 seconds if JS fails
+        setTimeout(() => {
+            const loader = document.getElementById('loader');
+            if (loader && !loader.classList.contains('hidden')) {
+                loader.classList.add('hidden');
+                console.log('Loader hidden by failsafe');
+            }
+        }, 3000);
+    </script>
+</head>
+
+<body class="dark-mode">
+    <!-- Loading Overlay -->
+    <div id="loader" class="loader-overlay">
+        <div class="loader-spinner"></div>
+    </div>
+
+    <!-- Particles container -->
+    <div id="particles-js"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo">Հայկ</a>
+            <div class="nav-links">
+                <a href="#games" title="Խաղեր"><span class="nav-icon">🎮</span> <span class="nav-text">Խաղեր</span></a>
+                <a href="#about" id="nav-dashboard-link" title="Մեր մասին"><span class="nav-icon">ℹ️</span> <span
+                        class="nav-text">Ինչո՞ւ Խաղալ</span></a>
+                <a href="#leaderboard" title="Մրցանիշ"><span class="nav-icon">🏆</span> <span
+                        class="nav-text">Մրցանիշ</span></a>
+            </div>
+            <div class="nav-actions">
+                <button id="dark-mode-toggle" class="icon-btn" aria-label="Toggle Dark Mode">☀️</button>
+                <button id="auth-btn" class="btn-primary auth-btn-icon"><span class="auth-icon">👤</span> <span
+                        class="auth-text">Մուտք</span></button>
+                <button class="mobile-menu-btn" aria-label="Menu">☰</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header id="hero" class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">Կենդանի Պահէ՛<br><span>Հայերէն Լեզուդ</span></h1>
+            <p class="hero-subtitle">Խաղեր, մարտահրաւէրներ եւ զուարճալի փորձառութիւններ, որոնք կը դարձնեն մեր առօրեայ հայերէնը պարզ եւ հաճելի։</p>
+            <div class="hero-buttons">
+                <a href="#games" class="btn-primary large">Սկսիլ</a>
+                <button id="hero-signup-btn" class="btn-secondary large">Գրանցուիլ</button>
+            </div>
+        </div>
+        <div class="hero-visual">
+            <div class="floating-letters">
+                <span>Ա</span><span>Բ</span><span>Գ</span><span>Դ</span><span>Ե</span><span>Զ</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Games Section -->
+    <section id="games" class="section games-section">
+        <h2 class="section-title">Խաղեր</h2>
+        <div class="playful-games-grid">
+            
+            
+            
+            <!-- Western Armenian spelling -->
+            <div class="app-card spelling-card" id="spelling-game-card">
+                <div class="app-card-icon">Գ</div>
+                <div class="app-card-info">
+                    <h3>Ճիշդ Գրէ՛</h3>
+                    <p>Ընտրէ՛ ճիշդ տառը եւ զգո՛յշ եղիր․ ունիս միայն երեք կեանք։</p>
+                    <div class="app-card-tags">
+                        <span class="tag">Ուղղագրութիւն</span>
+                        <span class="tag">Արագութիւն</span>
+                    </div>
+                </div>
+                <a href="spelling-game.html" class="play-action-btn">
+                    <span class="play-arrow">▶</span> <span class="btn-text">Խաղալ</span>
+                </a>
+            </div>
+            <!-- Hangman -->
+            <div class="app-card hangman-card" id="hangman-game-card">
+                <div class="app-card-icon" aria-hidden="true">
+                    <svg viewBox="0 0 64 64" fill="none">
+                        <path d="M8 56h48M18 56V8h28v9M18 19h28M18 29l9-13" />
+                        <circle cx="46" cy="23" r="5" />
+                        <path d="M46 28v13m0-9-7 6m7-6 7 6m-7 3-6 9m6-9 6 9" />
+                    </svg>
+                </div>
+                <div class="app-card-info">
+                    <h3>Կախաղան</h3>
+                    <p>Գուշակէ՛ գաղտնի բառը՝ տառ առ տառ։ Իւրաքանչիւր սխալ տառով կախաղանը կը գծուի:</p>
+                    <div class="app-card-tags">
+                        <span class="tag">Բառապաշար</span>
+                        <span class="tag">Գուշակութիւն</span>
+                    </div>
+                </div>
+                <a href="hangman.html" class="play-action-btn">
+                    <span class="play-arrow">▶</span> <span class="btn-text">Խաղալ</span>
+                </a>
+            </div>
+            <!-- Game Card 1: Wordle -->
+            <div class="app-card wordle-card" id="wordle-game-card">
+                <div class="app-card-icon">🔠</div>
+                <div class="app-card-info">
+                    <h3>Բառիկ</h3>
+                    <p>Գուշակէ՛ 5-տառնոց գաղտնի բառը: Ունիս միայն 6 փորձ </p>
+                    <div class="app-card-tags">
+                        <span class="tag">Տրամաբանութիւն</span>
+                        <span class="tag">Ամէնօրեայ</span>
+                    </div>
+                </div>
+                <a href="wordle.html" class="play-action-btn">
+                    <span class="play-arrow">▶</span> <span class="btn-text">Խաղալ</span>
+                </a>
+            </div>
+
+            <!-- Game Card 2: Typing -->
+            <div class="app-card typing-card" id="typing-game-card">
+                <div class="app-card-icon">⚡</div>
+                <div class="app-card-info">
+                    <h3>Արագատիպ</h3>
+                    <p>Որքա՞ն արագ կրնաս գրել: Փորձէ՛ քու մատներուդ արագութիւնը ժամանակին դէմ </p>
+                    <div class="app-card-tags">
+                        <span class="tag">Արագութիւն</span>
+                        <span class="tag">Մրցակցութիւն</span>
+                    </div>
+                </div>
+                <a href="typing-game.html" class="play-action-btn">
+                    <span class="play-arrow">▶</span> <span class="btn-text">Խաղալ</span>
+                </a>
+            </div>
+
+            <!-- Game Card 3: Space -->
+            <div class="app-card space-card" id="ztype-game-card">
+                <div class="app-card-icon">🚀</div>
+                <div class="app-card-info">
+                    <h3>Աստղային Մարտ</h3>
+                    <p>Պաշտպանէ՛ մոլորակդ ինկող աստղաքարերէն՝ արագ եւ ճիշդ գրելով </p>
+                    <div class="app-card-tags">
+                        <span class="tag">Արկածային</span>
+                        <span class="tag">Արագութիւն</span>
+                    </div>
+                </div>
+                <a href="ztype-game.html" class="play-action-btn">
+                    <span class="play-arrow">▶</span> <span class="btn-text">Խաղալ</span>
+                </a>
+            </div>
+
+            <!-- Game Card 4: Unscramble -->
+            <div class="app-card bee-card" id="spelling-bee-card">
+                <div class="app-card-icon">🧩</div>
+                <div class="app-card-info">
+                    <h3>Տառախառն</h3>
+                    <p>Վերադասաւորէ՛ տառերը եւ գտի՛ր պահուած բոլոր բառերը: Գտի՛ր գլխաւոր բառը </p>
+                    <div class="app-card-tags">
+                        <span class="tag">Բառապաշար</span>
+                        <span class="tag">Հանգիստ</span>
+                    </div>
+                </div>
+                <a href="spelling-bee.html" class="play-action-btn">
+                    <span class="play-arrow">▶</span> <span class="btn-text">Խաղալ</span>
+                </a>
+            </div>
+        </div>
+        
+    </section>
+    
+
+    <!-- Personal Dashboard (Shown when logged in) -->
+    <section id="personal-dashboard" class="section personal-dashboard-section" style="display: none;">
+        <h2 class="section-title">Արդիւնքներդ</h2>
+        <div class="dashboard-grid playful-grid">
+
+            <!-- Rank & XP Card -->
+            <div class="dash-card xp-card playful-card glow-card">
+                <div class="card-badge">🎯 Նպատակակէտ</div>
+                <div class="rank-display">
+                    <div class="rank-icon-wrapper" id="dash-rank-icon">🟤</div>
+                    <div class="rank-info">
+                        <h3 id="dash-rank-name">Պղինձ Գ</h3>
+                        <div class="xp-value"><span id="dash-xp">0</span> <span class="xp-label">XP</span></div>
+                    </div>
+                </div>
+                <div class="next-milestone playful-milestone" id="dash-milestone">
+                    <div class="milestone-header">
+                        <small id="dash-next-text">Յաջորդը՝ 1000 XP</small>
+                    </div>
+                    <div class="milestone-bar playful-bar">
+                        <div class="milestone-fill candy-stripe" style="width: 0%;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Streak Card -->
+            <div class="dash-card streak-card playful-card bounce-hover">
+                <div class="streak-header-playful">
+                    <div class="fire-icon-large">🔥</div>
+                    <div class="streak-details">
+                        <h3>Օրական Շարք</h3>
+                        <div class="streak-number-playful"><span id="dash-streak">0</span> Օր</div>
+                    </div>
+                </div>
+                <div class="streak-calendar playful-calendar" id="dash-calendar">
+                    <!-- Days will be generated by JS -->
+                </div>
+                <p class="dash-hint bubble-hint">Պահպանէ՛ շարքդ ամէն օր խաղալով:</p>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Why Play Section (Shown when logged out) -->
+    <section id="about" class="section why-play-section">
+        <h2 class="section-title">Ինչո՞ւ Խաղալ</h2>
+        <div class="benefits-grid">
+            <div class="benefit-card">
+                <div class="b-icon">📚</div>
+                <h4>Բառապաշարի զարգացում</h4>
+            </div>
+            <div class="benefit-card">
+                <div class="b-icon">⌨️</div>
+                <h4>Արագ գրելու հմտութիւն</h4>
+            </div>
+            <div class="benefit-card">
+                <div class="b-icon">🎮</div>
+                <h4>Զուարճալի ուսուցում</h4>
+            </div>
+        </div>
+    </section>
+
+    <!-- Leaderboard -->
+    <section id="leaderboard" class="section leaderboard-section">
+        <h2 class="section-title">Մրցանիշ</h2>
+
+        <div class="leaderboard-filters">
+            <button class="filter-btn active" data-game="total">Ընդհանուր</button>
+            <button class="filter-btn" data-game="streak" title="Շարք">🔥</button>
+            <button class="filter-btn" data-game="wordle" title="Բառիկ">🔠</button>
+            <button class="filter-btn" data-game="bee" title="Տառախառն">🧩</button>
+            <button class="filter-btn" data-game="typing" title="Արագատիպ">⚡</button>
+            <button class="filter-btn" data-game="ztype" title="Աստղային Մարտ">🚀</button>
+            <button class="filter-btn" data-game="spelling" title="Ճիշդ Գրէ՛">Գ</button>
+            <button class="filter-btn" data-game="hangman" title="Կախաղան" aria-label="Կախաղան">
+                <svg class="hangman-filter-icon" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+                    <path d="M8 56h48M18 56V8h28v9M18 19h28M18 29l9-13" />
+                    <circle cx="46" cy="23" r="5" />
+                    <path d="M46 28v13m0-9-7 6m7-6 7 6m-7 3-6 9m6-9 6 9" />
+                </svg>
+            </button>
+        </div>
+        <div id="leaderboard-score-filters" class="leaderboard-score-filters" hidden>
+        </div>
+
+        <div class="leaderboard-container glass-panel">
+            <table class="leaderboard-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Անուն</th>
+                        <th id="leaderboard-value-header" style="text-align: center;">XP</th>
+                    </tr>
+                </thead>
+                <tbody id="leaderboard-body">
+                    <!-- Dynamic rows will be inserted here -->
+                    <tr>
+                        <td colspan="3" style="text-align: center;">
+                            <div class="dots-loader"><span></span><span></span><span></span></div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="leaderboard-footer" style="gap: 1rem;">
+                <button id="show-all-leaderboard" class="btn-secondary small">Տեսնել աւելին</button>
+                <button id="collapse-leaderboard" class="btn-secondary small" style="display: none;"
+                    title="Փակել">🔼</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-brand">
+                <div class="footer-logo">Հայկ |</div>
+                <img src="pics/լոկո.png" alt="Հայկ լոգո" class="footer-logo-image">
+            </div>
+            <p>
+                Ս.Պ.Միութեան «Ա. Մանուկեան» մասնաճիւղի <strong>ԳՐԱԿԱՆ ՅԱՆՁՆԱԽՈՒՄԲ</strong>
+            </p>
+            <div class="social-links">
+                <a href="https://www.instagram.com/arf_sbm/">IG</a>
+                <a href="https://www.facebook.com/profile.php?id=100078389700639">FB</a>
+            </div>
+            <div class="copyright"><a href="privacy-policy.html" style="color: inherit;text-decoration: none;">© 2026 Հայկ. Բոլոր իրաւունքները պաշտպանուած են։</a></div>
+        </div>
+    </footer>
+
+    <!-- Auth Modal -->
+    <div id="auth-modal" class="modal">
+        <div class="modal-content glass-panel">
+            <button class="close-modal" aria-label="Close Modal">&times;</button>
+            <div class="auth-tabs">
+                <button class="auth-tab active" data-tab="login">Մուտք</button>
+                <button class="auth-tab" data-tab="signup">Գրանցուիլ</button>
+            </div>
+
+            <!-- Login Form -->
+            <form id="login-form" class="auth-form active">
+                <div class="form-group">
+                    <label for="login-email">Ել-նամակ</label>
+                    <input type="email" id="login-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Գաղտնաբառ</label>
+                    <input type="password" id="login-password" required>
+                </div>
+                <button type="submit" class="btn-primary w-100">Մուտք</button>
+                
+                <div class="auth-divider"><span>կամ</span></div>
+                
+                <button type="button" class="btn-google w-100" id="google-login-btn">
+                    <img src="https://www.google.com/favicon.ico" alt="Google"> Շարունակել Google-ով
+                </button>
+                
+                <div class="form-error" id="login-error"></div>
+            </form>
+
+            <!-- Signup Form -->
+            <form id="signup-form" class="auth-form">
+                <div class="form-group">
+                    <label for="signup-name">Անուն</label>
+                    <input type="text" id="signup-name" required pattern="^[ \u0530-\u058F]+$"
+                        title="Խնդրեմ գրեցէ՛ք միայն հայերէն տառերով">
+                </div>
+                <div class="form-group">
+                    <label for="signup-email">Ել-նամակ</label>
+                    <input type="email" id="signup-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-password">Գաղտնաբառ (նուազագոյնը 6 գիր)</label>
+                    <input type="password" id="signup-password" required minlength="6">
+                </div>
+                <button type="submit" class="btn-primary w-100">Գրանցուիլ</button>
+                
+                <div class="auth-divider"><span>կամ</span></div>
+                
+                <button type="button" class="btn-google w-100" id="google-signup-btn">
+                    <img src="https://www.google.com/favicon.ico" alt="Google"> Շարունակել Google-ով
+                </button>
+                
+                <div class="form-error" id="signup-error"></div>
+            </form>
+
+            <!-- Verification Form (Hidden by default) -->
+            <div id="verify-section" class="auth-form">
+                <h3 style="margin-bottom: 1rem; text-align: center;">Հաստատել ել-նամակը</h3>
+                <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.5rem; text-align: center;">
+                    Մենք ձեր հաստատման թիւը ղրկեցինք ձեր ել-նամակին:
+                </p>
+                <div class="form-group">
+                    <label for="verify-code">Հաստատման թիւ</label>
+                    <input type="text" id="verify-code" placeholder="12345678" maxlength="8"
+                        style="text-align: center; letter-spacing: 5px; font-size: 1.2rem;" required>
+                </div>
+                <button id="verify-btn" class="btn-primary w-100">Հաստատել</button>
+                <div class="form-error" id="verify-error"></div>
+                <button id="back-to-signup"
+                    style="background: none; border: none; color: var(--primary); margin-top: 1rem; cursor: pointer; width: 100%; font-weight: 600;">Յետ
+                    դէպի գրանցում</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Name Prompt Modal (For Google users/Missing Armenian name) - NON-SKIPPABLE -->
+    <div id="name-prompt-modal" class="modal" data-noskip="true">
+        <div class="modal-content glass-panel" style="max-width: 450px;">
+            <h2 style="text-align: center; margin-bottom: 1rem;">Բարի եկաք</h2>
+            <p style="text-align: center; margin-bottom: 2rem; color: var(--text-muted);">Խնդրեմ գրեցէ՛ք ձեր անունը <strong>հայերէն տառերով</strong> շարունակելու համար:</p>
+            
+            <form id="name-prompt-form">
+                <div class="form-group">
+                    <label for="prompt-full-name">Ձեր Անունը</label>
+                    <input type="text" id="prompt-full-name" required placeholder="Անուն" pattern="^[ \u0530-\u058F]+$" title="Խնդրեմ գրեցէ՛ք միայն հայերէն տառերով">
+                </div>
+                <button type="submit" class="btn-primary w-100" style="padding: 1rem;">Հաստատել</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container"></div>
+
+    <script src="js/api.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/messaging.js"></script>
+</body>
+
+</html>

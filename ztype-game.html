@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="hy">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>&#1329;&#1405;&#1407;&#1394;&#1377;&#1397;&#1387;&#1398; &#1348;&#1377;&#1408;&#1407;</title>
+    <meta name="description" lang="hy" content="Աստղային Մարտ՝ Հայկի արեւմտահայերէն տիեզերական գրելու խաղը։ Պաշտպանէ՛ մոլորակդ՝ արագ մուտքագրելով բառերը։">
+    <meta name="description" lang="en" content="Play Աստղային Մարտ, Hayg’s space-themed Western Armenian typing game. Type words quickly, defend your planet, and explore Armenian games at hayg.net.">
+    <link rel="stylesheet" href="css/shared.css">
+    <link rel="stylesheet" href="css/ztype-game.css">
+    <link rel="stylesheet" href="css/messaging.css">
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#8b5cf6">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="pics/logo.png">
+    <link rel="icon" type="image/svg+xml" href="pics/logo.svg">
+</head>
+
+<body id="ztype-game-body">
+    <div class="ztype-container" id="ztype-container">
+        <canvas id="game-canvas"></canvas>
+
+        <!-- HUD -->
+        <div id="hud" class="hud hidden">
+            <div class="hud-left">
+                <button class="hud-btn" id="hud-back">←</button>
+            </div>
+            <div class="hud-center">
+                <div class="hud-stat">
+                    <span class="hud-label">ՆԻՇ</span>
+                    <span class="hud-value" id="score-display">0</span>
+                </div>
+                <div class="hud-stat combo-stat" id="combo-container">
+                    <span class="hud-label">COMBO</span>
+                    <span class="hud-value" id="combo-display">0</span>
+                    <span class="combo-mult" id="combo-mult">x1</span>
+                </div>
+                <div class="hud-stat">
+                    <span class="hud-label">&#1348;&#1329;&#1343;&#1329;&#1360;&#1332;&#1329;&#1343;</span>
+                    <span class="hud-value" id="level-display">1</span>
+                </div>
+            </div>
+            <div class="hud-right">
+                <span id="lives-display"></span>
+            </div>
+        </div>
+
+        <!-- Word Target -->
+        <div id="word-target" class="word-target hidden"></div>
+
+        <!-- Start Menu -->
+        <div id="start-menu" class="overlay">
+            <div class="overlay-panel">
+                <a href="index.html#ztype-game-card" class="menu-back-btn" title="Back to Dashboard">←</a>
+                <div class="menu-title-glow">
+                    <h1 class="game-title">&#1329;&#1405;&#1407;&#1394;&#1377;&#1397;&#1387;&#1398;
+                        &#1348;&#1377;&#1408;&#1407;</h1>
+                    <p class="game-subtitle">&#1359;&#1387;&#1381;&#1382;&#1381;&#1408;&#1377;&#1391;&#1377;&#1398;
+                        &#1396;&#1377;&#1408;&#1407;&#1377;&#1391;&#1377;&#1398; &#1389;&#1377;&#1394;</p>
+                </div>
+                <select id="ztype-level-select" class="level-select ztype-select">
+                    <option value="easy">Դիւրին</option>
+                    <option value="medium">Միջին</option>
+                    <option value="hard" selected>Դժուար</option>
+                </select>
+                <p id="ztype-start-best" class="ztype-start-best">Լաւագոյն նիշ՝ 0</p>
+                <button class="action-btn pulse-btn" id="start-btn">&#1357;&#1391;&#1405;&#1387;&#1408;
+                    &#1341;&#1377;&#1394;&#1384;</button>
+                <div class="instructions">
+                    <p>&#1337;&#1399;&#1398;&#1377;&#1396;&#1387;&#1398;&#1381;&#1408;&#1384;
+                        &#1406;&#1381;&#1408;&#1383;&#1398; &#1391;&#1400;&#1410; &#1379;&#1377;&#1398;</p>
+                    <p>&#1359;&#1402;&#1383; &#1378;&#1377;&#1404;&#1381;&#1408;&#1384;
+                        &#1382;&#1377;&#1398;&#1400;&#1398;&#1412; &#1413;&#1379;&#1407;&#1381;&#1388;&#1400;&#1410;
+                        &#1392;&#1377;&#1396;&#1377;&#1408;</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Over -->
+        <div id="game-over" class="overlay hidden">
+            <div class="overlay-panel">
+                <h1 class="gameover-title">Խաղը Աւարտեցաւ</h1>
+                <div class="stats-grid">
+                    <div class="go-stat">
+                        <span class="go-label">ՆԻՇ</span>
+                        <span class="go-value" id="final-score">0</span>
+                    </div>
+                    <div class="go-stat best-score-stat">
+                        <span class="go-label">ԼԱՒԱԳՈՅՆ ՆԻՇ · <span id="final-difficulty"></span></span>
+                        <span class="go-value" id="final-best-score">0</span>
+                    </div>
+                    <div class="go-stat">
+                        <span class="go-label">&#1330;&#1377;&#1404;&#1381;&#1408;</span>
+                        <span class="go-value" id="final-words">0</span>
+                    </div>
+                    <div class="go-stat">
+                        <span
+                            class="go-label">ՃՇԳՐՏՈՒԹԻՒՆ</span>
+                        <span class="go-value" id="final-accuracy">100%</span>
+                    </div>
+                </div>
+                <p id="ztype-record-note" role="status" aria-live="polite"></p>
+                <button class="action-btn" id="retry-btn">&#1343;&#1408;&#1391;&#1387;&#1398;
+                    &#1363;&#1400;&#1408;&#1393;&#1383;</button>
+                <a href="index.html" class="secondary-btn" id="menu-btn">&#1331;&#1388;&#1389;. &#1335;&#1403;</a>
+            </div>
+        </div>
+
+        <!-- Keyboard -->
+        <div id="keyboard-container" class="ztype-keyboard"></div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/api.js"></script>
+    <script src="js/index.js"></script>
+    <script src="js/words.js"></script>
+    <script src="js/ztype-game.js"></script>
+    <script src="js/messaging.js"></script>
+</body>
+
+</html>

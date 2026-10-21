@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="hy">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Տառախառն</title>
+    <meta name="description" lang="hy" content="Տառախառն՝ արեւմտահայերէն բառախաղ Հայկի (Hayg) հարթակին վրայ։ Վերադասաւորէ՛ տառերը եւ գտի՛ր պահուած բառերը hayg.net-ի խաղերուն մէջ։">
+    <meta name="description" lang="en" content="Unscramble Armenian letters and discover hidden words in Տառախառն, a Western Armenian word game from Hayg (Հայկ). Play at hayg.net.">
+    <link rel="stylesheet" href="css/index.css?v=2">
+    <link rel="stylesheet" href="css/spelling-bee.css?v=2">
+    <link rel="stylesheet" href="css/messaging.css">
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#8b5cf6">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="pics/logo.png">
+    <link rel="icon" type="image/svg+xml" href="pics/logo.svg">
+</head>
+
+<body id="spelling-bee-body">
+    <div class="game-container bee-container">
+        <header class="game-header">
+            <a href="index.html#spelling-bee-card" class="back-button">←</a>
+            <h1>Տառախառն</h1>
+        </header>
+
+        <div class="game-content">
+            <div class="stats-panel glass-panel">
+                <div class="progress-section">
+                    <div class="rank-display">
+                        <span id="current-rank">Սկսնակ</span>
+                        <span id="current-score">0</span>
+                    </div>
+                    <div class="progress-bar-bg">
+                        <div id="progress-fill" class="progress-fill"></div>
+                        <div class="progress-markers">
+                            <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="main-play-area unscramble-layout">
+                <div class="progress-board-container glass-panel">
+                    <div class="found-words-header">
+                        Բառեր (<span id="found-count">0</span> / <span id="total-words-count">0</span>)
+                    </div>
+                    <div id="progress-board" class="progress-board">
+                        <!-- Progress Board (dash placeholders) will be generated here -->
+                    </div>
+                </div>
+
+                <div class="unscramble-section">
+                    <div id="game-message" class="game-message"></div>
+
+                    <div class="current-word-display">
+                        <span id="current-word"></span>
+                        <span class="cursor">|</span>
+                    </div>
+
+                    <div class="letter-rack" id="letter-rack">
+                        <!-- Letter tiles will be generated here -->
+                    </div>
+
+                    <div class="game-controls">
+                        <button id="delete-btn" class="control-btn">Ջնջել</button>
+                        <button id="shuffle-btn" class="control-btn shuffle">↻</button>
+                        <button id="enter-btn" class="control-btn enter">Մուտք</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="bee-start-overlay" class="start-overlay">
+            <div class="start-overlay-content">
+                <div class="start-overlay-icon">🧩</div>
+                <h2>Տառախառն</h2>
+                <p>Կազմէ բառեր տրուած տառերով</p>
+                <ul>
+                    <li>Գտի՛ր բոլոր պահուած բառերը</li>
+                    <li>Կրնաս գտնել գլխաւոր բառը</li>
+                </ul>
+                <button id="start-bee-btn" class="start-btn">Սկսիր</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/api.js"></script>
+    <script src="js/index.js"></script>
+    <script src="js/words.js"></script>
+    <script src="js/spelling-bee.js"></script>
+    <script src="js/messaging.js"></script>
+</body>
+
+</html>

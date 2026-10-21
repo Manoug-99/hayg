@@ -1,0 +1,436 @@
+#hangman-game-body {
+    --button-bg: #8b5cf6;
+    --button-hover: #7c3aed;
+    --accent: #8b5cf6;
+    --accent-hover: #7c3aed;
+    --hangman-ink: #7c3aed;
+    --hangman-soft: rgba(139, 92, 246, 0.12);
+}
+
+#hangman-game-body.dark-mode {
+    --hangman-ink: #c4b5fd;
+    --hangman-soft: rgba(139, 92, 246, 0.2);
+}
+
+.hangman-container {
+    width: min(100%, 760px);
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+    padding: 0 18px 18px;
+}
+
+.hangman-container .game-header {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: var(--header-height, 60px);
+    flex-shrink: 0;
+}
+
+.hangman-container .game-header h1 {
+    margin: 0;
+    color: var(--text-color);
+    font-size: 1.45rem;
+    font-weight: 800;
+}
+
+.hangman-container .back-button {
+    position: absolute;
+    left: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.hangman-container .header-controls {
+    position: absolute;
+    right: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.hangman-container .game-header > .keyboard-settings-button {
+    z-index: 10;
+}
+
+.hangman-stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+    padding: 12px;
+    margin: 8px 0 12px;
+    text-align: center;
+}
+
+.hangman-stats > div {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.hangman-stats .stat-label {
+    color: var(--text-muted);
+    font-size: 0.78rem;
+}
+
+.hangman-stats > div:last-child .stat-label {
+    line-height: 1.2;
+}
+
+.hangman-stats strong {
+    color: var(--hangman-ink);
+    font-size: 1.1rem;
+}
+
+.hangman-play-area {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(180px, 0.9fr) minmax(0, 1.1fr);
+    align-items: center;
+    gap: 16px;
+    flex: 1 0 auto;
+    min-height: 260px;
+    padding: 18px;
+}
+
+.hangman-art {
+    width: min(100%, 250px);
+    justify-self: center;
+}
+
+.hangman-art svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+}
+
+.hangman-art .gallows,
+.hangman-part {
+    fill: none;
+    stroke: var(--hangman-ink);
+    stroke-width: 6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.hangman-part {
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.hangman-part.visible {
+    opacity: 1;
+}
+
+.hangman-round {
+    min-width: 0;
+    text-align: center;
+}
+
+.hangman-instructions {
+    margin: 0 0 16px;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+}
+
+.hangman-word {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: clamp(5px, 1.5vw, 11px);
+    min-height: 48px;
+}
+
+.hangman-letter-slot {
+    display: grid;
+    place-items: center;
+    width: clamp(28px, 7vw, 42px);
+    height: 44px;
+    border-bottom: 3px solid var(--hangman-ink);
+    color: var(--text-color);
+    font-size: clamp(1.1rem, 4vw, 1.65rem);
+    font-weight: 800;
+}
+
+.hangman-status {
+    min-height: 2.8em;
+    margin: 16px 0 12px;
+    color: var(--text-color);
+    font-weight: 600;
+}
+
+.hangman-letters {
+    min-height: 44px;
+    color: var(--text-muted);
+    font-size: 0.82rem;
+}
+
+#hangman-wrong-letters {
+    min-height: 1.5em;
+    margin-top: 3px;
+    color: #ef4444;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+}
+
+.hangman-keyboard {
+    display: grid;
+    gap: 7px;
+    width: 100%;
+    padding: 12px 0 4px;
+}
+
+.hangman-keyboard .keyboard-row {
+    display: flex;
+    justify-content: center;
+    gap: clamp(3px, 1vw, 7px);
+}
+
+.hangman-key {
+    flex: 0 1 48px;
+    min-width: 0;
+    min-height: 44px;
+    padding: 5px 3px;
+    border: 1px solid var(--surface-border);
+    border-radius: 10px;
+    background: var(--key-bg);
+    color: var(--key-text);
+    font: inherit;
+    font-size: clamp(0.95rem, 3.5vw, 1.15rem);
+    font-weight: 700;
+    cursor: pointer;
+    touch-action: manipulation;
+    transition: background-color 0.15s ease, transform 0.15s ease;
+}
+
+.hangman-key:hover:not(:disabled) {
+    background: var(--hangman-soft);
+    transform: translateY(-2px);
+}
+
+.hangman-key:disabled {
+    cursor: default;
+}
+
+.hangman-key.correct {
+    background: #10b981;
+    color: #fff;
+}
+
+.hangman-key.incorrect {
+    background: #ef4444;
+    color: #fff;
+    opacity: 0.72;
+}
+
+.hangman-container .start-overlay {
+    z-index: 20;
+    padding: 20px;
+    border-radius: 24px;
+    background: rgba(12, 16, 31, 0.72);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+}
+
+.hangman-container .start-overlay.hidden {
+    visibility: hidden;
+}
+
+.hangman-overlay-card {
+    width: min(100%, 420px);
+    padding: clamp(26px, 6vw, 42px);
+    border: 1px solid rgba(167, 139, 250, 0.25);
+    border-radius: 24px;
+    background: linear-gradient(145deg, rgba(30, 27, 55, 0.98), rgba(17, 24, 39, 0.98));
+    box-shadow: 0 28px 80px rgba(0, 0, 0, 0.48), 0 0 50px rgba(139, 92, 246, 0.12);
+    color: #f8fafc;
+    text-align: left;
+}
+
+.hangman-overlay-kicker {
+    display: inline-flex;
+    align-items: center;
+    min-height: 28px;
+    padding: 5px 10px;
+    border: 1px solid rgba(167, 139, 250, 0.28);
+    border-radius: 999px;
+    background: rgba(139, 92, 246, 0.12);
+    color: #c4b5fd;
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+}
+
+.hangman-overlay-card h2 {
+    margin: 20px 0 10px;
+    color: #f8fafc;
+    font-size: clamp(1.7rem, 7vw, 2.2rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+}
+
+.hangman-overlay-description,
+.hangman-result-word {
+    margin: 0;
+    color: #cbd5e1;
+    font-size: 0.98rem;
+    line-height: 1.7;
+}
+
+.hangman-difficulty-field {
+    margin-top: 26px;
+}
+
+.hangman-overlay-card label {
+    display: block;
+    margin: 0 0 9px;
+    color: #e2e8f0;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.hangman-overlay-card .level-select {
+    width: 100%;
+    min-height: 50px;
+    margin: 0;
+    padding: 0 14px;
+    border: 1px solid rgba(148, 163, 184, 0.3);
+    border-radius: 12px;
+    background: rgba(15, 23, 42, 0.85);
+    color: #f8fafc;
+    font-size: 1rem;
+}
+
+.hangman-overlay-card .start-btn {
+    width: 100%;
+    min-height: 52px;
+    margin-top: 22px;
+    border-radius: 12px;
+    background: var(--button-bg);
+    color: #fff;
+    box-shadow: 0 10px 25px rgba(124, 58, 237, 0.3);
+    font-size: 1rem;
+}
+
+.hangman-overlay-card .start-btn:hover {
+    background: var(--button-hover);
+    box-shadow: 0 12px 30px rgba(124, 58, 237, 0.42);
+}
+
+.hangman-overlay-card .start-btn:focus-visible,
+.hangman-overlay-card .level-select:focus-visible {
+    outline: 3px solid rgba(196, 181, 253, 0.75);
+    outline-offset: 3px;
+}
+
+#hangman-result-overlay .hangman-overlay-card {
+    text-align: center;
+}
+
+#hangman-result-overlay .hangman-overlay-kicker {
+    justify-content: center;
+}
+
+#hangman-result-overlay .hangman-overlay-kicker.is-win {
+    border-color: rgba(52, 211, 153, 0.35);
+    background: rgba(16, 185, 129, 0.12);
+    color: #6ee7b7;
+}
+
+#hangman-result-overlay .hangman-overlay-card h2 {
+    margin-top: 18px;
+}
+
+#hangman-result-overlay .hangman-result-word {
+    margin-top: 8px;
+}
+
+.hangman-result-points {
+    margin: 18px 0 0;
+    padding: 14px 12px;
+    border: 1px solid rgba(167, 139, 250, 0.2);
+    border-radius: 12px;
+    background: rgba(139, 92, 246, 0.1);
+    color: #c4b5fd !important;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.native-keyboard-mode .hangman-keyboard {
+    display: none;
+}
+
+@media (max-width: 600px) {
+    .hangman-container {
+        min-height: 100dvh;
+        padding: 0 10px 12px;
+    }
+
+    .hangman-stats {
+        gap: 4px;
+        padding: 10px 5px;
+    }
+
+    .hangman-stats .stat-label {
+        font-size: 0.67rem;
+    }
+
+    .hangman-stats strong {
+        font-size: 0.98rem;
+    }
+
+    .hangman-play-area {
+        grid-template-columns: minmax(110px, 0.72fr) minmax(0, 1.28fr);
+        gap: 8px;
+        min-height: 210px;
+        padding: 12px 8px;
+    }
+
+    .hangman-art {
+        width: 100%;
+    }
+
+    .hangman-keyboard {
+        gap: 6px;
+        padding-top: 10px;
+    }
+
+    .hangman-keyboard .keyboard-row {
+        gap: 4px;
+    }
+
+    .hangman-key {
+        flex-basis: 9.1%;
+        min-height: 43px;
+        border-radius: 8px;
+    }
+
+    .hangman-keyboard .keyboard-row-wide .hangman-key {
+        flex-basis: 7.5%;
+        padding-right: 1px;
+        padding-left: 1px;
+        font-size: clamp(0.78rem, 3vw, 1rem);
+    }
+}
+
+@media (max-width: 380px) {
+    .hangman-play-area {
+        grid-template-columns: 100px minmax(0, 1fr);
+    }
+
+    .hangman-key {
+        min-height: 39px;
+        padding: 3px 1px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hangman-part,
+    .hangman-key {
+        transition: none;
+    }
+}

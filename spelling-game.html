@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="hy">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#ec4899">
+    <title>Ճիշդ Գրէ՛</title>
+    <meta name="description" lang="hy" content="Ճիշդ Գրէ՛՝ արեւմտահայերէն ուղղագրական խաղ Հայկի (Hayg) մէջ։ Ընտրէ՛ ճիշդ տառը եւ մարզէ՛ հայերէնդ hayg.net-ի խաղերով։">
+    <meta name="description" lang="en" content="Practice Western Armenian spelling with Ճիշդ Գրէ՛, a fun Armenian word game from Hayg (Հայկ). Choose the correct letter and play at hayg.net.">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Armenian:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="css/spelling-game.css">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/svg+xml" href="pics/logo.svg">
+</head>
+<body id="spelling-game-body">
+    <main class="spelling-shell">
+        <header class="spelling-header">
+            <a class="spelling-back" href="index.html#spelling-game-card" aria-label="Վերադառնալ խաղերուն">←</a>
+            <h1>Ճիշդ Գրէ՛</h1>
+        </header>
+
+        <section class="spelling-panel" aria-labelledby="spelling-title">
+            <div class="spelling-topline">
+                <div>
+                    <h2 id="spelling-title">Ճիշդ տառը ընտրէ՛</h2>
+                </div>
+                <div class="spelling-stats">
+                    <div class="spelling-timer-wrap">
+                        <span class="stat-label">Ժամանակ</span>
+                        <strong id="spelling-timer" aria-live="off">00:15</strong>
+                    </div>
+                    <div>
+                        <span class="stat-label">Նիշ</span>
+                        <strong id="spelling-score">0</strong>
+                    </div>
+                    <div class="spelling-lives-wrap">
+                        <span class="stat-label">Կեանք</span>
+                        <strong id="spelling-lives" aria-label="Երեք կեանք">♥ ♥ ♥</strong>
+                    </div>
+                </div>
+            </div>
+
+            <p class="spelling-category" id="spelling-category"></p>
+            <div class="spelling-question" id="spelling-question" aria-live="polite"></div>
+            <div class="spelling-choices" id="spelling-choices" role="group" aria-label="Պատասխանի ընտրութիւններ"></div>
+            <p class="spelling-feedback spelling-sr-only" id="spelling-feedback" aria-live="polite"></p>
+
+            <div class="spelling-overlay" id="spelling-intro">
+                <div class="spelling-overlay-card">
+                    <h2>Ճիշդ Գրէ՛</h2>
+                    <p>Ունիս 15 երկ-վայրկեան եւ երեք կեանք։ Ամէն ճիշդ պատասխան կը շահի 10 նիշ եւ 2 երկ-վայրկեան։ Սխալ պատասխանը մէկ կեանք կը խլէ։</p>
+                    <p class="spelling-xp-description" id="spelling-xp-description" hidden>Օրական երեք խաղի մէջ կրնաս XP շահիլ</p>
+                    <div class="spelling-xp-counter" id="spelling-xp-counter" aria-live="polite" aria-label="XP խաղերու մնացորդը կը բեռնուի" hidden>
+                        <span aria-hidden="true">XP</span>
+                        <strong id="spelling-xp-remaining">—/3</strong>
+                    </div>
+                    <button class="spelling-primary" id="spelling-start" type="button">Սկսիլ խաղը</button>
+                </div>
+            </div>
+
+            <div class="spelling-overlay" id="spelling-results" hidden>
+                <div class="spelling-overlay-card">
+                    <h2>Խաղը վերջացաւ</h2>
+                    <div class="spelling-result-grid">
+                        <div><span>Վերջնական նիշ</span><strong id="spelling-final-score">0</strong></div>
+                        <div><span>Ճիշդ պատասխաններ</span><strong id="spelling-final-correct">0</strong></div>
+                        <div><span>Սխալ պատասխաններ</span><strong id="spelling-final-wrong">0</strong></div>
+                        <div class="spelling-personal-best" id="spelling-personal-best-card">
+                            <span>Անձնական լաւագոյն</span>
+                            <strong id="spelling-final-best">0</strong>
+                        </div>
+                    </div>
+                    <p class="spelling-record-note" id="spelling-record-note" aria-live="polite"></p>
+                    <p class="spelling-save-status" id="spelling-save-status" aria-live="polite"></p>
+                    <div class="spelling-result-actions">
+                        <button class="spelling-primary" id="spelling-restart" type="button">Կրկին խաղալ</button>
+                        <a class="spelling-secondary" href="index.html#spelling-game-card">Վերադառնալ խաղերուն</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/api.js"></script>
+    <script src="js/index.js"></script>
+    <script src="js/spelling-data.js"></script>
+    <script src="js/spelling-game.js"></script>
+</body>
+</html>

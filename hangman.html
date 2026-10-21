@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="hy">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Կախաղան</title>
+    <meta name="description" lang="hy" content="Խաղա՛ Կախաղան՝ Հայկի արեւմտահայերէն բառախաղը։ Գուշակէ՛ գաղտնի բառը տառ առ տառ՝ hayg.net-ի հայերէն խաղերուն մէջ։">
+    <meta name="description" lang="en" content="Play Hangman in Western Armenian on Hayg (Հայկ). Guess the hidden word letter by letter in this Armenian word game at hayg.net.">
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="css/hangman.css">
+    <link rel="stylesheet" href="css/messaging.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#8b5cf6">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="pics/logo.png">
+    <link rel="icon" type="image/svg+xml" href="pics/logo.svg">
+</head>
+
+<body id="hangman-game-body">
+    <main class="game-container hangman-container">
+        <header class="game-header">
+            <a href="index.html#hangman-game-card" class="back-button" aria-label="Վերադառնալ">←</a>
+            <h1>Կախաղան</h1>
+            <div class="header-controls"></div>
+        </header>
+
+        <section class="hangman-stats glass-panel" aria-label="Խաղի արդիւնքներ">
+            <div>
+                <span class="stat-label">Նիշ</span>
+                <strong id="hangman-score">0</strong>
+            </div>
+            <div>
+                <span class="stat-label">Սխալներ</span>
+                <strong><span id="hangman-misses">0</span> / 6</strong>
+            </div>
+            <div>
+                <span class="stat-label">Շարք</span>
+                <strong id="hangman-streak">0</strong>
+            </div>
+            <div>
+                <span class="stat-label">Լաւագոյն</span>
+                <strong id="hangman-best-streak">0</strong>
+            </div>
+        </section>
+
+        <section class="hangman-play-area glass-panel" aria-label="Կախաղան խաղ">
+            <div class="hangman-art" role="img" aria-label="Կախաղանի պատկեր, որ կը լրացուի սխալ գուշակութիւններուն հետ">
+                <svg viewBox="0 0 240 230" aria-hidden="true">
+                    <path class="gallows" d="M24 213H216M58 213V20H166V49M58 51H166" />
+                    <path class="gallows" d="M58 68L92 20" />
+                    <circle class="hangman-part" data-part="1" cx="166" cy="69" r="20" />
+                    <path class="hangman-part" data-part="2" d="M166 89V148" />
+                    <path class="hangman-part" data-part="3" d="M166 105L136 128" />
+                    <path class="hangman-part" data-part="4" d="M166 105L196 128" />
+                    <path class="hangman-part" data-part="5" d="M166 148L139 184" />
+                    <path class="hangman-part" data-part="6" d="M166 148L193 184" />
+                </svg>
+            </div>
+
+            <div class="hangman-round">
+                <p class="hangman-instructions">Գուշակէ՛ բառին տառերը</p>
+                <div id="hangman-word" class="hangman-word" aria-label="Գաղտնի բառը"></div>
+                <p id="hangman-status" class="hangman-status" role="status" aria-live="polite">
+                    Ընտրէ՛ տառ մը՝ խաղը սկսելու համար։
+                </p>
+                <div class="hangman-letters">
+                    <span>Սխալ տառեր</span>
+                    <div id="hangman-wrong-letters" aria-label="Սխալ գուշակուած տառեր"></div>
+                </div>
+            </div>
+        </section>
+
+        <div id="hangman-keyboard" class="hangman-keyboard" aria-label="Հայերէն ստեղնաշար"></div>
+
+        <div id="hangman-start-overlay" class="start-overlay">
+            <div class="hangman-overlay-card">
+                <span class="hangman-overlay-kicker">ԲԱՌԱՅԻՆ ՄԱՐՏԱՀՐԱՒԷՐ</span>
+                <h2>Կախաղան</h2>
+                <p class="hangman-overlay-description">Գուշակէ՛ գաղտնի բառը տառ առ տառ։ Վեց սխալ փորձ ունիս։</p>
+                <div class="hangman-difficulty-field">
+                    <label for="hangman-difficulty">Բառի երկարութիւնը</label>
+                    <select id="hangman-difficulty" class="level-select">
+                        <option value="short">Կարճ · 3–5 տառ</option>
+                        <option value="medium">Միջին · 6–8 տառ</option>
+                        <option value="long">Երկար · 9+ տառ</option>
+                    </select>
+                </div>
+                <button id="hangman-start-btn" class="start-btn" type="button">Սկսիլ խաղը</button>
+            </div>
+        </div>
+
+        <div id="hangman-result-overlay" class="start-overlay hidden">
+            <div class="hangman-overlay-card">
+                <span id="hangman-result-icon" class="hangman-overlay-kicker">ԱՐԴԻՒՆՔ</span>
+                <h2 id="hangman-result-title">Շնորհաւոր</h2>
+                <p id="hangman-result-word" class="hangman-result-word"></p>
+                <p id="hangman-result-points" class="hangman-result-points"></p>
+                <button id="hangman-next-btn" class="start-btn" type="button">Շարունակել</button>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/api.js"></script>
+    <script src="js/index.js"></script>
+    <script src="js/words.js"></script>
+    <script src="js/hangman.js"></script>
+    <script src="js/messaging.js"></script>
+</body>
+
+</html>

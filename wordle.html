@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="hy">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Բառիկ</title>
+    <meta name="description" lang="hy" content="Բառիկ՝ հայերէն Wordle եւ բառլ խաղը Հայկ (Hayg) հարթակին վրայ։ Գուշակէ՛ գաղտնի բառը՝ արեւմտահայերէն խաղերու այս զուարճալի մարտահրաւէրին մէջ։">
+    <meta name="description" lang="en" content="Play Բառիկ, Hayg’s Armenian Wordle and wordle-style word game. Guess the hidden word in this Western Armenian game at hayg.net.">
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="css/wordle.css">
+    <link rel="stylesheet" href="css/messaging.css">
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#8b5cf6">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="pics/logo.png">
+    <link rel="icon" type="image/svg+xml" href="pics/logo.svg">
+</head>
+
+<body id="wordle-game-body">
+    <div class="game-container">
+        <header class="game-header">
+            <a href="index.html#wordle-game-card" class="back-button">←</a>
+            <h1>Բառիկ</h1>
+            <div class="header-controls">
+
+            </div>
+        </header>
+
+        <div class="game-message" id="game-message"></div>
+
+        <div id="board-container">
+            <div id="wordle-start-overlay" class="start-overlay">
+                <h2 style="margin-bottom: 15px;">Ընտրէ բարդութիւնը</h2>
+                <select id="wordle-level-select" class="level-select" style="font-size: 16px; padding: 10px; margin: 0; width: 80%;">
+                    <option value="3">Դիւրին (3 տառ)</option>
+                    <option value="5" selected>Միջին (5 տառ)</option>
+                    <option value="7">Դժուար (7 տառ)</option>
+                </select>
+                <button id="start-wordle-btn" class="start-btn">Սկսիր</button>
+            </div>
+            <div id="board"></div>
+        </div>
+
+        <div id="keyboard-container"></div>
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/api.js"></script>
+    <script src="js/index.js"></script>
+    <script src="js/words.js"></script>
+    <script src="js/wordle.js"></script>
+    <script src="js/messaging.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="hy">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Ո՞վ է այս դէմքը</title>
+    <meta name="description" lang="hy" content="Խաղա՛ «Ո՞վ է այս դէմքը»՝ Հայկի հայերէն գուշակութեան խաղը։ Ճանչցի՛ր դէմքերը եւ վայելէ՛ արեւմտահայերէն խաղեր hayg.net-ի մէջ։">
+    <meta name="description" lang="en" content="Guess who the faces are in this Armenian quiz game from Hayg (Հայկ). Discover Western Armenian games and play at hayg.net.">
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="css/faces-game.css">
+    <link rel="stylesheet" href="css/messaging.css">
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#8b5cf6">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="pics/logo.png">
+    <link rel="icon" type="image/svg+xml" href="pics/logo.svg">
+</head>
+<body id="faces-game-body">
+    <div class="game-container">
+        <header class="game-header">
+            <a href="index.html#games" class="back-button">←</a>
+            <h1>Ո՞վ է այս դէմքը</h1>
+            <div class="header-controls">
+                <button id="keyboard-toggle" title="Toggle Native Keyboard">📱</button>
+            </div>
+        </header>
+
+        <div id="level-container">
+            <div id="level" class="glass-panel">1 / 50</div>
+        </div>
+
+        <div id="image-container">
+            <img id="person-image" src="" alt="Person to guess" class="glass-panel">
+        </div>
+
+        <div id="guess-section">
+            <input type="text" id="guess-input" class="glass-panel" placeholder="Գրէ՛ անունը" readonly inputmode="none" autocomplete="off">
+            <button id="submit-btn">Ստուգել</button>
+        </div>
+
+        <div id="message" class="game-message"></div>
+
+        <div id="keyboard-container"></div>
+    </div>
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/api.js"></script>
+    <script src="js/index.js"></script>
+    <script src="js/faces-game.js"></script>
+    <script src="js/messaging.js"></script>
+</body>
+</html>

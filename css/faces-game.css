@@ -1,0 +1,168 @@
+/* Theme Overrides */
+#faces-game-body {
+    --bg-color: #faf5ff;
+    --button-bg: #9333ea;
+    --button-hover: #a855f7;
+    --accent: #9333ea;
+    --surface-border: rgba(147, 51, 234, 0.2);
+    --surface-shadow: 0 8px 32px rgba(147, 51, 234, 0.12);
+}
+
+#faces-game-body.dark-mode {
+    --bg-color: #2e1065;
+    --surface-bg: rgba(76, 29, 149, 0.5);
+    --button-bg: #9333ea;
+    --button-hover: #a855f7;
+    --accent: #a855f7;
+}
+
+.game-container {
+    width: 100%;
+    max-width: 500px;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+#level-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+#level {
+    padding: 6px 16px;
+    font-size: 16px;
+    font-weight: 700;
+    border-radius: 20px;
+    background: var(--button-bg);
+    color: var(--button-text);
+    border: none;
+    box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2);
+}
+
+#image-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+    overflow: hidden;
+    padding: 0 20px;
+}
+
+#person-image {
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 16px;
+    display: block;
+    box-shadow: var(--surface-shadow);
+}
+
+#guess-section {
+    display: flex;
+    gap: 10px;
+    padding: 10px 20px 20px;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+}
+
+#guess-input {
+    flex-grow: 1;
+    padding: 12px 16px;
+    font-size: 16px;
+    border: 2px solid var(--surface-border);
+    border-radius: 12px;
+    outline: none;
+    color: var(--text-color);
+    background: var(--surface-bg);
+    transition: all 0.3s ease;
+    font-weight: 600;
+}
+
+#guess-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+}
+
+#submit-btn {
+    padding: 12px 20px;
+    font-size: 16px;
+    font-weight: 700;
+    background-color: var(--button-bg);
+    color: var(--button-text);
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+}
+
+#submit-btn:hover {
+    background-color: var(--button-hover);
+    transform: translateY(-2px);
+}
+
+#submit-btn:active {
+    transform: translateY(1px);
+}
+
+.wrong-shake {
+    animation: wrongShake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+@keyframes wrongShake {
+
+    10%,
+    90% {
+        transform: translateX(-2px);
+    }
+
+    20%,
+    80% {
+        transform: translateX(4px);
+    }
+
+    30%,
+    50%,
+    70% {
+        transform: translateX(-8px);
+    }
+
+    40%,
+    60% {
+        transform: translateX(8px);
+    }
+}
+
+.correct-pop {
+    animation: correctPop 0.5s ease-out;
+}
+
+.correct-pop #person-image {
+    box-shadow: 0 0 30px rgba(16, 185, 129, 0.8);
+    border: 2px solid var(--accent);
+}
+
+@keyframes correctPop {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}

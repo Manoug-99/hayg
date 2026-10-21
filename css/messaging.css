@@ -1,0 +1,224 @@
+#messaging-root [hidden] {
+    display: none !important;
+}
+
+.message-launcher {
+    position: fixed;
+    right: max(18px, env(safe-area-inset-right));
+    bottom: max(18px, env(safe-area-inset-bottom));
+    z-index: 10000;
+}
+
+.message-launch-button,
+.message-primary-button,
+.message-close-button {
+    border: 0;
+    font: inherit;
+    cursor: pointer;
+}
+
+.message-launch-button,
+.message-primary-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 48px;
+    padding: 0 20px;
+    border-radius: 8px;
+    background: #087f5b;
+    color: #fff;
+    font-weight: 700;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    transition: background 160ms ease, transform 160ms ease;
+}
+
+.message-launch-button:hover,
+.message-primary-button:hover:not(:disabled) {
+    background: #066b4d;
+    transform: translateY(-1px);
+}
+
+.message-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 12000;
+    display: grid;
+    place-items: center;
+    overflow-y: auto;
+    padding: 20px;
+    background: rgba(7, 20, 17, 0.72);
+    backdrop-filter: blur(8px);
+    animation: message-fade-in 180ms ease-out both;
+}
+
+.message-dialog {
+    width: min(100%, 480px);
+    max-height: min(90vh, 760px);
+    overflow-y: auto;
+    padding: clamp(24px, 6vw, 36px);
+    border: 1px solid #d6e6df;
+    border-radius: 12px;
+    background: #f8fcfa;
+    color: #14251f;
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+    animation: message-rise-in 220ms ease-out both;
+}
+
+.dark-mode .message-dialog {
+    border-color: #315347;
+    background: #14251f;
+    color: #f1f7f4;
+}
+
+.message-eyebrow {
+    margin: 0 0 8px;
+    color: #087f5b;
+    font-size: 0.78rem;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.message-dialog h2 {
+    margin: 0;
+    font-size: 1.45rem;
+    line-height: 1.3;
+}
+
+.message-body {
+    margin: 20px 0 28px;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+    line-height: 1.75;
+}
+
+.message-dialog-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 22px;
+}
+
+.message-close-button {
+    display: grid;
+    flex: 0 0 40px;
+    width: 40px;
+    aspect-ratio: 1;
+    place-items: center;
+    border-radius: 8px;
+    background: transparent;
+    color: inherit;
+    font-size: 1.6rem;
+}
+
+.message-close-button:hover {
+    background: rgba(8, 127, 91, 0.12);
+}
+
+#message-compose-form {
+    display: grid;
+    gap: 10px;
+}
+
+#message-compose-form label {
+    margin-top: 8px;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+#message-compose-form select,
+#message-compose-form textarea {
+    width: 100%;
+    min-height: 46px;
+    padding: 11px 12px;
+    border: 1px solid #b9ccc3;
+    border-radius: 6px;
+    background: #fff;
+    color: #14251f;
+    font: inherit;
+    user-select: text;
+}
+
+#message-compose-form textarea {
+    min-height: 140px;
+    resize: vertical;
+}
+
+.dark-mode #message-compose-form select,
+.dark-mode #message-compose-form textarea {
+    border-color: #49665b;
+    background: #0d1b16;
+    color: #f1f7f4;
+}
+
+#message-compose-form select:focus,
+#message-compose-form textarea:focus,
+.message-launch-button:focus-visible,
+.message-primary-button:focus-visible,
+.message-close-button:focus-visible {
+    outline: 3px solid #55d6a4;
+    outline-offset: 2px;
+}
+
+.message-primary-button {
+    width: 100%;
+    margin-top: 4px;
+}
+
+.message-primary-button:disabled {
+    cursor: wait;
+    opacity: 0.65;
+}
+
+.message-status {
+    min-height: 1.4em;
+    margin: 0;
+    color: #b42318;
+    font-size: 0.88rem;
+}
+
+@keyframes message-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes message-rise-in {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 480px) {
+    .message-launch-button {
+        min-height: 44px;
+        padding: 0 14px;
+    }
+
+    .message-backdrop {
+        align-items: end;
+        padding: 12px;
+    }
+
+    .message-dialog {
+        max-height: 88vh;
+        padding: 24px 20px;
+    }
+}
+
+@media (max-width: 900px) {
+    .message-launcher {
+        bottom: 105px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .message-backdrop,
+    .message-dialog {
+        animation: none;
+    }
+
+    .message-launch-button,
+    .message-primary-button {
+        transition: none;
+    }
+}

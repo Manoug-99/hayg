@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="hy">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Արագատիպ</title>
+    <meta name="description" lang="hy" content="Արագատիպ՝ Հայկի արեւմտահայերէն արագ գրելու խաղը։ Փորձէ՛ արագութիւնդ եւ ճշգրտութիւնդ hayg.net-ի հայերէն խաղերուն մէջ։">
+    <meta name="description" lang="en" content="Test your typing speed in Արագատիպ, Hayg’s Western Armenian typing game. Improve accuracy and speed with Armenian games at hayg.net.">
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="css/typing-game.css">
+    <link rel="stylesheet" href="css/messaging.css">
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#8b5cf6">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="pics/logo.png">
+    <link rel="icon" type="image/svg+xml" href="pics/logo.svg">
+</head>
+
+<body id="typing-game-body">
+    <div class="game-container typing-container">
+        <header class="game-header">
+            <a href="index.html#typing-game-card" class="back-button">←</a>
+            <h1>Արագատիպ</h1>
+            <div class="header-controls"></div>
+        </header>
+
+        <div class="stats-bar glass-panel">
+            <div class="stat">
+                <span class="stat-label">Ժամանակ</span>
+                <span id="time-display" class="stat-value">30</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Արագութիւն</span>
+                <span id="wpm-display" class="stat-value">0</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Ճշգրտութիւն</span>
+                <span id="accuracy-display" class="stat-value">100%</span>
+            </div>
+        </div>
+
+        <div class="words-container glass-panel" id="words-container" style="position: relative;">
+            <div id="typing-start-overlay" class="start-overlay" style="z-index: 20;">
+                <h2>Ընտրէ ժամանակը</h2>
+                <select id="typing-timer-select" class="level-select">
+                    <option value="60">1 վայրկեան</option>
+                    <option value="120" selected>2 վայրկեան</option>
+                    <option value="300">5 վայրկեան</option>
+                </select>
+                <button id="start-typing-btn" class="start-btn">Սկսիր</button>
+            </div>
+            <div id="words-display"></div>
+            <div class="focus-overlay" id="focus-overlay">Սկսիր տպել</div>
+        </div>
+
+        <section id="typing-result-overlay" class="typing-results-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="result-overlay-title">
+            <div id="typing-result-card" class="typing-results-card">
+                <p class="typing-results-kicker">ԱՐԴԻՒՆՔ</p>
+                <h2 id="result-overlay-title">Աւարտ</h2>
+                <p id="typing-result-duration" class="typing-result-duration"></p>
+                <div class="typing-results-grid">
+                    <div class="typing-result-stat">
+                        <span class="typing-result-label">Նիշ</span>
+                        <strong id="final-score" class="typing-result-value">0</strong>
+                    </div>
+                    <div class="typing-result-stat">
+                        <span class="typing-result-label">Արագութիւն</span>
+                        <strong id="final-wpm" class="typing-result-value">0</strong>
+                        <span class="typing-result-unit">WPM</span>
+                    </div>
+                    <div class="typing-result-stat">
+                        <span class="typing-result-label">Ճշգրտութիւն</span>
+                        <strong id="final-accuracy" class="typing-result-value">0%</strong>
+                    </div>
+                    <div class="typing-result-stat typing-best-stat">
+                        <span class="typing-result-label">Լաւագոյն</span>
+                        <strong id="typing-best-score" class="typing-result-value">0</strong>
+                    </div>
+                    <div class="typing-result-stat typing-best-speed-stat">
+                        <span class="typing-result-label">Լաւագոյն արագութիւն</span>
+                        <strong id="typing-best-speed" class="typing-result-value">0</strong>
+                        <span class="typing-result-unit">WPM</span>
+                    </div>
+                </div>
+                <p id="typing-record-note" class="typing-record-note" aria-live="polite"></p>
+                <div class="typing-result-actions">
+                    <button id="retry-typing-btn" class="start-btn" type="button">Կրկնել</button>
+                    <button id="typing-change-duration" class="typing-change-duration" type="button">Փոխել ժամանակը</button>
+                </div>
+            </div>
+        </section>
+
+        <div id="keyboard-container" class="typing-keyboard"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/api.js"></script>
+    <script src="js/index.js"></script>
+    <script src="js/words.js"></script>
+    <script src="js/typing-game.js"></script>
+    <script src="js/messaging.js"></script>
+</body>
+
+</html>
