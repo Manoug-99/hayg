@@ -47,7 +47,15 @@ window.showToast = function (message, type = 'success', duration = null) {
     if (type === 'streak') icon = '🔥';
     if (type === 'warning') icon = '⚠️';
 
-    toast.innerHTML = `<span style="margin-right: 8px;">${icon}</span> ${message}`;
+    const iconNode = document.createElement('span');
+    iconNode.textContent = icon;
+    iconNode.style.marginRight = '8px';
+
+    const textNode = document.createElement('span');
+    textNode.textContent = String(message ?? '');
+
+    toast.appendChild(iconNode);
+    toast.appendChild(textNode);
 
     container.appendChild(toast);
 
@@ -530,6 +538,269 @@ window.getRankDetails = function (xp) {
     return { current: currentRank, next: nextRank, progress: Math.max(0, Math.min(100, progressPercent)) };
 };
 
+// --- AUDIO EFFECTS FOR OVERLAYS (Zero-dependency Web Audio API) ---
+let apiAudioContext = null;
+
+function getApiAudioContext() {
+    try {
+        if (!apiAudioContext) {
+            const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+            if (AudioContextClass) {
+                apiAudioContext = new AudioContextClass();
+            }
+        }
+        if (apiAudioContext && apiAudioContext.state === 'suspended') {
+            apiAudioContext.resume().catch(() => {});
+        }
+        return apiAudioContext;
+    } catch (_) {
+        return null;
+    }
+}
+
+// Warm up AudioContext on early user gestures
+if (typeof window !== 'undefined') {
+    ['click', 'touchstart', 'keydown'].forEach(evt => {
+        window.addEventListener(evt, () => {
+            getApiAudioContext();
+        }, { once: true, passive: true });
+    });
+}
+
+function playRankUpSound() {
+    try {
+        const ctx = getApiAudioContext();
+        if (!ctx) return;
+        const now = ctx.currentTime;
+
+        // Master gain for rank up
+        const masterGain = ctx.createGain();
+        masterGain.gain.setValueAtTime(0.35, now);
+        masterGain.connect(ctx.destination);
+
+        // 1. Ascending 6-note heroic fanfare arpeggio (C4, E4, G4, C5, E5, G5)
+        const arpeggio = [
+            { freq: 261.63, time: 0.00, dur: 0.12 }, // C4
+            { freq: 329.63, time: 0.08, dur: 0.12 }, // E4
+            { freq: 392.00, time: 0.16, dur: 0.12 }, // G4
+            { freq: 523.25, time: 0.24, dur: 0.14 }, // C5
+            { freq: 659.25, time: 0.32, dur: 0.15 }, // E5
+            { freq: 783.99, time: 0.40, dur: 0.18 }  // G5
+        ];
+
+        arpeggio.forEach(note => {
+            const osc = ctx.createOscillator();
+            const noteGain = ctx.createGain();
+            const noteStart = now + note.time;
+
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(note.freq, noteStart);
+
+            noteGain.gain.setValueAtTime(0.001, noteStart);
+            noteGain.gain.exponentialRampToValueAtTime(0.28, noteStart + 0.02);
+            noteGain.gain.exponentialRampToValueAtTime(0.001, noteStart + note.dur);
+
+            osc.connect(noteGain);
+            noteGain.connect(masterGain);
+
+            osc.start(noteStart);
+            osc.stop(noteStart + note.dur);
+        });
+
+        // 2. Grand Triumphant Chord Hit at t = 0.50s (C major grand celebratory chord)
+        const chordStart = now + 0.50;
+
+        // Sub bass support for epic depth
+        const bassOsc = ctx.createOscillator();
+        const bassGain = ctx.createGain();
+        bassOsc.type = 'sine';
+        bassOsc.frequency.setValueAtTime(130.81, chordStart); // C3
+        bassGain.gain.setValueAtTime(0.22, chordStart);
+        bassGain.gain.exponentialRampToValueAtTime(0.001, chordStart + 0.75);
+        bassOsc.connect(bassGain);
+        bassGain.connect(masterGain);
+        bassOsc.start(chordStart);
+        bassOsc.stop(chordStart + 0.75);
+
+        // Core celebratory chord voices (C4, G4, C5, E5)
+        const chordFreqs = [261.63, 392.00, 523.25, 659.25];
+        chordFreqs.forEach((freq, idx) => {
+            const osc = ctx.createOscillator();
+            const g = ctx.createGain();
+            osc.type = idx % 2 === 0 ? 'triangle' : 'sine';
+            osc.frequency.setValueAtTime(freq, chordStart);
+
+            g.gain.setValueAtTime(0.001, chordStart);
+            g.gain.exponentialRampToValueAtTime(0.24, chordStart + 0.03);
+            g.gain.exponentialRampToValueAtTime(0.001, chordStart + 0.85);
+
+            osc.connect(g);
+            g.connect(masterGain);
+
+            osc.start(chordStart);
+            osc.stop(chordStart + 0.85);
+        });
+
+        // 3. Shimmering Chime Sparkles (C6, E6, G6, C7 bell overtones)
+        const chimeFreqs = [
+            { freq: 1046.50, delay: 0.02, dur: 0.9 }, // C6
+            { freq: 1318.51, delay: 0.06, dur: 1.0 }, // E6
+            { freq: 1567.98, delay: 0.10, dur: 1.1 }, // G6
+            { freq: 2093.00, delay: 0.14, dur: 1.2 }  // C7
+        ];
+
+        chimeFreqs.forEach(chime => {
+            const cOsc = ctx.createOscillator();
+            const cGain = ctx.createGain();
+            const startTime = chordStart + chime.delay;
+
+            cOsc.type = 'sine';
+            cOsc.frequency.setValueAtTime(chime.freq, startTime);
+
+            cGain.gain.setValueAtTime(0.001, startTime);
+            cGain.gain.exponentialRampToValueAtTime(0.15, startTime + 0.02);
+            cGain.gain.exponentialRampToValueAtTime(0.0001, startTime + chime.dur);
+
+            cOsc.connect(cGain);
+            cGain.connect(masterGain);
+
+            cOsc.start(startTime);
+            cOsc.stop(startTime + chime.dur);
+        });
+
+    } catch (err) {
+        console.warn('Rank up audio playback error:', err);
+    }
+}
+
+function playStreakSound() {
+    try {
+        const ctx = getApiAudioContext();
+        if (!ctx) return;
+        const now = ctx.currentTime;
+
+        const masterGain = ctx.createGain();
+        masterGain.gain.setValueAtTime(0.35, now);
+        masterGain.connect(ctx.destination);
+
+        // 1. Fiery Whoosh / Ignition Sweep (noise burst + upward sweep)
+        const noiseBufferSize = Math.floor(ctx.sampleRate * 0.22);
+        const noiseBuffer = ctx.createBuffer(1, noiseBufferSize, ctx.sampleRate);
+        const output = noiseBuffer.getChannelData(0);
+        for (let i = 0; i < noiseBufferSize; i++) {
+            output[i] = (Math.random() * 2 - 1) * Math.exp(-i / (noiseBufferSize * 0.35));
+        }
+
+        const noiseSrc = ctx.createBufferSource();
+        noiseSrc.buffer = noiseBuffer;
+
+        const filter = ctx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.setValueAtTime(260, now);
+        filter.frequency.exponentialRampToValueAtTime(1400, now + 0.20);
+        filter.Q.setValueAtTime(2.5, now);
+
+        const noiseGain = ctx.createGain();
+        noiseGain.gain.setValueAtTime(0.001, now);
+        noiseGain.gain.exponentialRampToValueAtTime(0.25, now + 0.04);
+        noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+
+        noiseSrc.connect(filter);
+        filter.connect(noiseGain);
+        noiseGain.connect(masterGain);
+
+        noiseSrc.start(now);
+        noiseSrc.stop(now + 0.22);
+
+        // 2. Rising Dynamic Flame Power Bursts
+        // Burst 1 (t = 0.06s)
+        const b1Osc = ctx.createOscillator();
+        const b1Gain = ctx.createGain();
+        b1Osc.type = 'triangle';
+        b1Osc.frequency.setValueAtTime(220, now + 0.06); // A3
+        b1Gain.gain.setValueAtTime(0.001, now + 0.06);
+        b1Gain.gain.exponentialRampToValueAtTime(0.25, now + 0.08);
+        b1Gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+        b1Osc.connect(b1Gain);
+        b1Gain.connect(masterGain);
+        b1Osc.start(now + 0.06);
+        b1Osc.stop(now + 0.18);
+
+        // Burst 2 (t = 0.16s)
+        const b2Osc = ctx.createOscillator();
+        const b2Gain = ctx.createGain();
+        b2Osc.type = 'triangle';
+        b2Osc.frequency.setValueAtTime(329.63, now + 0.16); // E4
+        b2Gain.gain.setValueAtTime(0.001, now + 0.16);
+        b2Gain.gain.exponentialRampToValueAtTime(0.28, now + 0.18);
+        b2Gain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
+        b2Osc.connect(b2Gain);
+        b2Gain.connect(masterGain);
+        b2Osc.start(now + 0.16);
+        b2Osc.stop(now + 0.28);
+
+        // Burst 3: Big Resonant Blaze Chord (t = 0.26s)
+        const blazeStart = now + 0.26;
+        const blazeFreqs = [
+            { freq: 220.00, type: 'sine', dur: 0.65, gain: 0.24 },     // A3 bass warmth
+            { freq: 440.00, type: 'triangle', dur: 0.70, gain: 0.26 }, // A4
+            { freq: 554.37, type: 'triangle', dur: 0.75, gain: 0.26 }, // C#5
+            { freq: 659.25, type: 'sine', dur: 0.80, gain: 0.24 },     // E5
+            { freq: 880.00, type: 'triangle', dur: 0.85, gain: 0.22 }  // A5
+        ];
+
+        blazeFreqs.forEach(voice => {
+            const osc = ctx.createOscillator();
+            const g = ctx.createGain();
+            osc.type = voice.type;
+            osc.frequency.setValueAtTime(voice.freq, blazeStart);
+
+            g.gain.setValueAtTime(0.001, blazeStart);
+            g.gain.exponentialRampToValueAtTime(voice.gain, blazeStart + 0.03);
+            g.gain.exponentialRampToValueAtTime(0.001, blazeStart + voice.dur);
+
+            osc.connect(g);
+            g.connect(masterGain);
+
+            osc.start(blazeStart);
+            osc.stop(blazeStart + voice.dur);
+        });
+
+        // 3. Crackling Fire Embers / Sparks (micro-spark cascades)
+        const embers = [
+            { freq: 1760.00, delay: 0.08, dur: 0.25 }, // A6
+            { freq: 2217.46, delay: 0.16, dur: 0.28 }, // C#7
+            { freq: 2637.02, delay: 0.24, dur: 0.32 }, // E7
+            { freq: 3520.00, delay: 0.32, dur: 0.35 }  // A7
+        ];
+
+        embers.forEach(ember => {
+            const eOsc = ctx.createOscillator();
+            const eGain = ctx.createGain();
+            const eStart = blazeStart + ember.delay;
+
+            eOsc.type = 'sine';
+            eOsc.frequency.setValueAtTime(ember.freq, eStart);
+
+            eGain.gain.setValueAtTime(0.001, eStart);
+            eGain.gain.exponentialRampToValueAtTime(0.12, eStart + 0.015);
+            eGain.gain.exponentialRampToValueAtTime(0.0001, eStart + ember.dur);
+
+            eOsc.connect(eGain);
+            eGain.connect(masterGain);
+
+            eOsc.start(eStart);
+            eOsc.stop(eStart + ember.dur);
+        });
+
+    } catch (err) {
+        console.warn('Streak audio playback error:', err);
+    }
+}
+
+window.playRankUpSound = playRankUpSound;
+window.playStreakSound = playStreakSound;
+
 window.showRankUpAnimation = function (rankName, emoji, color) {
     // Dismiss keyboard on mobile to show full screen
     const nativeInput = document.getElementById('native-keyboard-input');
@@ -540,17 +811,8 @@ window.showRankUpAnimation = function (rankName, emoji, color) {
 
     let overlay = document.getElementById('rank-up-overlay');
 
-    // Play sound
-    try {
-        const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3');
-        audio.volume = 0.5;
-        const playPromise = audio.play();
-        if (playPromise !== undefined) {
-            playPromise.catch(error => console.log('Audio playback failed:', error));
-        }
-    } catch (e) {
-        console.log('Audio playback exception:', e);
-    }
+    // Play rank up fanfare sound
+    playRankUpSound();
 
     const dismissOverlay = () => {
         if (overlay) {
@@ -649,17 +911,8 @@ window.showStreakAnimation = function (streakCount = 1) {
 
     let overlay = document.getElementById('streak-overlay');
 
-    // Play streak celebration sound
-    try {
-        const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3');
-        audio.volume = 0.5;
-        const playPromise = audio.play();
-        if (playPromise !== undefined) {
-            playPromise.catch(error => console.log('Audio playback failed:', error));
-        }
-    } catch (e) {
-        console.log('Audio playback exception:', e);
-    }
+    // Play streak celebration sound effect
+    playStreakSound();
 
     const dismissOverlay = () => {
         if (overlay) {

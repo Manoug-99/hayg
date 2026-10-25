@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     let score = 0;
     let audioContext;
     let shuffledLetters = [];
+    let selectedTileIndices = [];
 
     const currentWordDisplay = document.getElementById("current-word");
     const progressBoard = document.getElementById("progress-board");
@@ -27,30 +28,140 @@ document.addEventListener("DOMContentLoaded", async () => {
         { name: "Հանճարեղ", min: 0.8 }
     ];
 
+    let clickNoiseBuffer = null;
+
     function initAudio() {
         if (!audioContext) {
-            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+            if (AudioContextClass) {
+                audioContext = new AudioContextClass();
+            }
+        }
+        if (audioContext && audioContext.state === "suspended") {
+            audioContext.resume().catch(() => {});
+        }
+        if (audioContext && !clickNoiseBuffer) {
+            try {
+                const bufferSize = Math.floor(audioContext.sampleRate * 0.035);
+                clickNoiseBuffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+                const data = clickNoiseBuffer.getChannelData(0);
+                for (let i = 0; i < bufferSize; i++) {
+                    data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.3));
+                }
+            } catch (_) {}
         }
     }
 
     function playClickSound() {
-        if (!audioContext) initAudio();
-        const bufferSize = audioContext.sampleRate * 0.04;
-        const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
-        const data = buffer.getChannelData(0);
-        for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
-        const noiseSource = audioContext.createBufferSource();
-        noiseSource.buffer = buffer;
-        const filter = audioContext.createBiquadFilter();
-        filter.type = 'bandpass';
-        filter.frequency.value = 2500;
-        const gainNode = audioContext.createGain();
-        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.03);
-        noiseSource.connect(filter);
-        filter.connect(gainNode);
-        gainNode.connect(audioContext.destination);
-        noiseSource.start();
+        try {
+            initAudio();
+            if (!audioContext || audioContext.state !== "running" || !clickNoiseBuffer) return;
+            const now = audioContext.currentTime;
+            const noise = audioContext.createBufferSource();
+            noise.buffer = clickNoiseBuffer;
+            const filter = audioContext.createBiquadFilter();
+            filter.type = 'bandpass';
+            filter.frequency.setValueAtTime(2500, now);
+            const gainNode = audioContext.createGain();
+            gainNode.gain.setValueAtTime(0.25, now);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.03);
+            noise.connect(filter);
+            filter.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            noise.start(now);
+        } catch (_) {}
+    }
+
+    function playWordFoundSound() {
+        try {
+            initAudio();
+            if (!audioContext || audioContext.state !== "running") return;
+            const now = audioContext.currentTime;
+            const notes = [659.25, 830.61, 987.77]; // E5, G#5, B5
+            notes.forEach((freq, i) => {
+                const noteTime = now + (i * 0.075);
+                const osc = audioContext.createOscillator();
+                const gain = audioContext.createGain();
+                osc.type = "sine";
+                osc.frequency.setValueAtTime(freq, noteTime);
+                gain.gain.setValueAtTime(0.2, noteTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, noteTime + 0.26);
+                osc.connect(gain);
+                gain.connect(audioContext.destination);
+                osc.start(noteTime);
+                osc.stop(noteTime + 0.26);
+            });
+        } catch (_) {}
+    }
+
+    function playBingoSound() {
+        try {
+            initAudio();
+            if (!audioContext || audioContext.state !== "running") return;
+            const now = audioContext.currentTime;
+            const notes = [659.25, 830.61, 987.77, 1318.51]; // E5, G#5, B5, E6
+            notes.forEach((freq, i) => {
+                const noteTime = now + (i * 0.085);
+                const osc = audioContext.createOscillator();
+                const gain = audioContext.createGain();
+                osc.type = i === 3 ? "triangle" : "sine";
+                osc.frequency.setValueAtTime(freq, noteTime);
+                gain.gain.setValueAtTime(0.26, noteTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, noteTime + 0.42);
+                osc.connect(gain);
+                gain.connect(audioContext.destination);
+                osc.start(noteTime);
+                osc.stop(noteTime + 0.42);
+            });
+        } catch (_) {}
+    }
+
+    function playErrorSound() {
+        try {
+            initAudio();
+            if (!audioContext || audioContext.state !== "running") return;
+            const now = audioContext.currentTime;
+            [0, 0.085].forEach((delay, idx) => {
+                const noteTime = now + delay;
+                const osc = audioContext.createOscillator();
+                const gain = audioContext.createGain();
+                osc.type = "triangle";
+                osc.frequency.setValueAtTime(idx === 0 ? 175 : 145, noteTime);
+                gain.gain.setValueAtTime(0.18, noteTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, noteTime + 0.07);
+                osc.connect(gain);
+                gain.connect(audioContext.destination);
+                osc.start(noteTime);
+                osc.stop(noteTime + 0.07);
+            });
+        } catch (_) {}
+    }
+
+    function playGameCompleteSound() {
+        try {
+            initAudio();
+            if (!audioContext || audioContext.state !== "running") return;
+            const now = audioContext.currentTime;
+            const chords = [
+                { time: 0, freqs: [523.25, 659.25, 783.99] }, // C major
+                { time: 0.16, freqs: [587.33, 739.99, 880.00] }, // D major
+                { time: 0.35, freqs: [659.25, 830.61, 987.77, 1318.51] } // E major / high
+            ];
+            chords.forEach(chord => {
+                chord.freqs.forEach(freq => {
+                    const osc = audioContext.createOscillator();
+                    const gain = audioContext.createGain();
+                    osc.type = "sine";
+                    osc.frequency.setValueAtTime(freq, now + chord.time);
+                    gain.gain.setValueAtTime(0.16, now + chord.time);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + chord.time + 0.45);
+                    osc.connect(gain);
+                    gain.connect(audioContext.destination);
+                    osc.start(now + chord.time);
+                    osc.stop(now + chord.time + 0.45);
+                });
+            });
+        } catch (_) {}
     }
 
     function loadPuzzle() {
@@ -78,6 +189,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     function resetGameState() {
         currentWord = "";
+        selectedTileIndices = [];
         foundWords = [];
         score = 0;
 
@@ -85,6 +197,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         renderProgressBoard();
         renderLetterRack();
+        updateWordDisplay();
         updateUI();
     }
 
@@ -113,11 +226,15 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     function renderLetterRack() {
         letterRack.innerHTML = '';
-        shuffledLetters.forEach(letter => {
+        shuffledLetters.forEach((letter, index) => {
             const tile = document.createElement("div");
             tile.className = "letter-tile";
+            tile.dataset.index = index;
+            if (selectedTileIndices.includes(index)) {
+                tile.classList.add("used");
+            }
             tile.textContent = letter;
-            tile.onclick = () => addLetter(letter);
+            tile.onclick = () => handleTileClick(index);
 
             // Touch feedback
             tile.ontouchstart = () => tile.classList.add("key-pressed");
@@ -128,29 +245,70 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     }
 
+    function updateRackHighlights() {
+        const tiles = letterRack.querySelectorAll('.letter-tile');
+        tiles.forEach((tile, index) => {
+            if (selectedTileIndices.includes(index)) {
+                tile.classList.add('used');
+            } else {
+                tile.classList.remove('used');
+            }
+        });
+    }
+
+    function handleTileClick(index) {
+        if (selectedTileIndices.includes(index)) {
+            // Clicking the most recently selected letter deletes/unselects it
+            if (selectedTileIndices[selectedTileIndices.length - 1] === index) {
+                deleteLetter();
+            }
+            return;
+        }
+        addTileByIndex(index);
+    }
+
+    function addTileByIndex(index) {
+        if (!currentPuzzle || index < 0 || index >= shuffledLetters.length) return;
+        if (currentWord.length >= currentPuzzle.mainWord.length) return;
+        if (selectedTileIndices.includes(index)) return;
+
+        selectedTileIndices.push(index);
+        currentWord += shuffledLetters[index];
+        playClickSound();
+        updateWordDisplay();
+        updateRackHighlights();
+    }
+
     function addLetter(letter) {
         if (!currentPuzzle || currentWord.length >= currentPuzzle.mainWord.length) return;
 
-        // Count occurrences in currentWord
-        const currentCount = currentWord.split("").filter(l => l === letter).length;
-        const maxCount = currentPuzzle.mainWord.split("").filter(l => l === letter).length;
+        // Find first unused tile matching this letter
+        const availableIndex = shuffledLetters.findIndex((l, i) => l === letter && !selectedTileIndices.includes(i));
 
-        if (currentCount >= maxCount) {
-            // Cannot use this letter more times than it appears in mainWord
+        if (availableIndex === -1) {
+            // Cannot use this letter more times than available in rack
+            playErrorSound();
             showMessage("Տառը սպառած է");
             return;
         }
 
-        playClickSound();
-        currentWord += letter;
-        updateWordDisplay();
+        addTileByIndex(availableIndex);
     }
 
     function deleteLetter() {
         if (currentWord.length === 0) return;
         playClickSound();
+        selectedTileIndices.pop();
         currentWord = currentWord.slice(0, -1);
         updateWordDisplay();
+        updateRackHighlights();
+    }
+
+    function clearCurrentWord() {
+        currentWord = "";
+        selectedTileIndices = [];
+        updateWordDisplay();
+        updateRackHighlights();
     }
 
     function updateWordDisplay() {
@@ -160,6 +318,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     function shuffleLetters() {
         playClickSound();
         shuffleArray(shuffledLetters);
+        // Map currently typed characters to new tile positions so highlights remain intact
+        const newSelected = [];
+        for (const char of currentWord) {
+            const idx = shuffledLetters.findIndex((l, i) => l === char && !newSelected.includes(i));
+            if (idx !== -1) {
+                newSelected.push(idx);
+            }
+        }
+        selectedTileIndices = newSelected;
         renderLetterRack();
     }
 
@@ -167,9 +334,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (currentWord.length === 0) return;
 
         if (foundWords.includes(currentWord)) {
+            playErrorSound();
             showMessage("Արդէն գտած ես");
-            currentWord = "";
-            updateWordDisplay();
+            clearCurrentWord();
             return;
         }
 
@@ -178,14 +345,16 @@ document.addEventListener("DOMContentLoaded", async () => {
             let wordScore = currentWord.length * 10;
             if (currentWord === currentPuzzle.mainWord) {
                 wordScore = (currentWord.length * 20) + 50; // Bingo
+                playBingoSound();
+            } else {
+                playWordFoundSound();
             }
 
             score += wordScore;
             foundWords.push(currentWord);
 
             revealWord(currentWord);
-            currentWord = "";
-            updateWordDisplay();
+            clearCurrentWord();
             updateUI();
 
             // Award XP immediately for the found word
@@ -195,9 +364,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             checkWinCondition();
         } else {
+            playErrorSound();
             showMessage("Այս բառարանին մէջ չկայ");
-            currentWord = "";
-            updateWordDisplay();
+            clearCurrentWord();
         }
     }
 
@@ -239,6 +408,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     function checkWinCondition() {
         if (foundWords.length === currentPuzzle.allWords.length) {
+            playGameCompleteSound();
             const completionBonus = 100;
             score += completionBonus; // Completion Bonus
             updateUI();

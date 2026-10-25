@@ -250,8 +250,26 @@ function updateUIForUser(user) {
         welcomeText.style.display = 'inline-block';
     }
 
-    if (heroTitle) heroTitle.innerHTML = `Բարի եկաք,<br><span>${truncatedName}</span>`;
-    if (heroSubtitle) heroSubtitle.innerHTML = `Պատրա՞ստ ես յաջորդ մարտահրաւէրին:<br><br><span id="user-stats-display" style="font-weight: 800; color: var(--accent); font-size: 1.5rem;"></span>`;
+    if (heroTitle) {
+        heroTitle.textContent = '';
+        heroTitle.appendChild(document.createTextNode('Բարի եկաք,'));
+        heroTitle.appendChild(document.createElement('br'));
+        const heroName = document.createElement('span');
+        heroName.textContent = truncatedName;
+        heroTitle.appendChild(heroName);
+    }
+    if (heroSubtitle) {
+        heroSubtitle.textContent = '';
+        heroSubtitle.appendChild(document.createTextNode('Պատրա՞ստ ես յաջորդ մարտահրաւէրին:'));
+        heroSubtitle.appendChild(document.createElement('br'));
+        heroSubtitle.appendChild(document.createElement('br'));
+        const statsDisplay = document.createElement('span');
+        statsDisplay.id = 'user-stats-display';
+        statsDisplay.style.fontWeight = '800';
+        statsDisplay.style.color = 'var(--accent)';
+        statsDisplay.style.fontSize = '1.5rem';
+        heroSubtitle.appendChild(statsDisplay);
+    }
 
     // Fetch user profile stats
     if (sb) {
@@ -265,7 +283,14 @@ function updateUIForUser(user) {
                     } else {
                         // Refresh UI with Armenian name from profile
                         const profileName = truncateName(data.full_name, 15);
-                        if (heroTitle) heroTitle.innerHTML = `Բարի եկաք,<br><span>${profileName}</span>`;
+                        if (heroTitle) {
+                            heroTitle.textContent = '';
+                            heroTitle.appendChild(document.createTextNode('Բարի եկաք,'));
+                            heroTitle.appendChild(document.createElement('br'));
+                            const heroName = document.createElement('span');
+                            heroName.textContent = profileName;
+                            heroTitle.appendChild(heroName);
+                        }
                         if (welcomeText) welcomeText.textContent = `Բարի եկաք, ${profileName}`;
                     }
 
@@ -301,7 +326,14 @@ function updateUIForGuest() {
         welcomeText.style.display = 'none';
     }
 
-    if (heroTitle) heroTitle.innerHTML = 'Կենդանի Պահէ՛<br><span>Հայերէն Լեզուդ</span>';
+    if (heroTitle) {
+        heroTitle.textContent = '';
+        heroTitle.appendChild(document.createTextNode('Կենդանի Պահէ՛'));
+        heroTitle.appendChild(document.createElement('br'));
+        const guestName = document.createElement('span');
+        guestName.textContent = 'Հայերէն Լեզուդ';
+        heroTitle.appendChild(guestName);
+    }
     if (heroSubtitle) heroSubtitle.textContent = 'Խաղեր, մարտահրաւէրներ եւ զուարճալի փորձառութիւններ, որոնք կը դարձնեն մեր առօրեայ հայերէնը պարզ եւ հաճելի։';
 
     // Toggle Dashboard visibility

@@ -47,15 +47,28 @@
 
         <section class="hangman-play-area glass-panel" aria-label="Կախաղան խաղ">
             <div class="hangman-art" role="img" aria-label="Կախաղանի պատկեր, որ կը լրացուի սխալ գուշակութիւններուն հետ">
-                <svg viewBox="0 0 240 230" aria-hidden="true">
-                    <path class="gallows" d="M24 213H216M58 213V20H166V49M58 51H166" />
-                    <path class="gallows" d="M58 68L92 20" />
-                    <circle class="hangman-part" data-part="1" cx="166" cy="69" r="20" />
-                    <path class="hangman-part" data-part="2" d="M166 89V148" />
-                    <path class="hangman-part" data-part="3" d="M166 105L136 128" />
-                    <path class="hangman-part" data-part="4" d="M166 105L196 128" />
-                    <path class="hangman-part" data-part="5" d="M166 148L139 184" />
-                    <path class="hangman-part" data-part="6" d="M166 148L193 184" />
+                <svg id="hangman-svg" viewBox="0 0 240 230" aria-hidden="true">
+                    <path class="gallows" d="M24 213H216M58 213V20H166M58 68L92 20" />
+                    <path class="gallows-rope" id="hangman-rope" d="M166 20V49" />
+                    <g id="hangman-figure" class="hangman-figure">
+                        <circle class="hangman-part part-head" data-part="1" pathLength="100" cx="166" cy="69" r="20" />
+                        <g class="hangman-face" id="hangman-face" aria-hidden="true">
+                            <line x1="157" y1="63" x2="163" y2="69" />
+                            <line x1="163" y1="63" x2="157" y2="69" />
+                            <line x1="169" y1="63" x2="175" y2="69" />
+                            <line x1="175" y1="63" x2="169" y2="69" />
+                            <path d="M162 76 Q166 72 170 76" />
+                        </g>
+                        <path class="hangman-part part-body" data-part="2" pathLength="100" d="M166 89V148" />
+                        <path class="hangman-part part-arm-left" data-part="3" pathLength="100" d="M166 105L136 128" />
+                        <path class="hangman-part part-arm-right" data-part="4" pathLength="100" d="M166 105L196 128" />
+                        <path class="hangman-part part-leg-left" data-part="5" pathLength="100" d="M166 148L139 184" />
+                        <path class="hangman-part part-leg-right" data-part="6" pathLength="100" d="M166 148L193 184" />
+                    </g>
+                    <g id="hangman-dust" class="hangman-dust" aria-hidden="true">
+                        <ellipse cx="166" cy="212" rx="16" ry="4" />
+                        <path d="M142 211 Q134 205 128 211 M190 211 Q198 205 204 211" />
+                    </g>
                 </svg>
             </div>
 
@@ -106,6 +119,7 @@
     <script src="js/api.js"></script>
     <script src="js/index.js"></script>
     <script src="js/words.js"></script>
+    <script src="js/spelling-data.js"></script>
     <script src="js/hangman.js"></script>
     <script src="js/messaging.js"></script>
 </body>

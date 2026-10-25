@@ -127,7 +127,7 @@
     font-weight: 700;
 }
 
-#message-compose-form select,
+#message-compose-form .custom-select-trigger,
 #message-compose-form textarea {
     width: 100%;
     min-height: 46px;
@@ -145,20 +145,41 @@
     resize: vertical;
 }
 
-.dark-mode #message-compose-form select,
+.dark-mode #message-compose-form .custom-select-trigger,
 .dark-mode #message-compose-form textarea {
     border-color: #49665b;
     background: #0d1b16;
     color: #f1f7f4;
 }
 
-#message-compose-form select:focus,
+#message-compose-form .custom-select-trigger:focus,
 #message-compose-form textarea:focus,
 .message-launch-button:focus-visible,
 .message-primary-button:focus-visible,
 .message-close-button:focus-visible {
     outline: 3px solid #55d6a4;
     outline-offset: 2px;
+}
+
+#message-compose-form .custom-select-dropdown {
+    width: 100%;
+}
+
+#message-compose-form .custom-select-trigger {
+    min-height: 46px;
+    border-radius: 6px;
+    text-align: left;
+}
+
+#message-compose-form .custom-select-menu {
+    width: 100%;
+    background: #fff;
+    color: #14251f;
+}
+
+.dark-mode #message-compose-form .custom-select-menu {
+    background: #0d1b16;
+    color: #f1f7f4;
 }
 
 .message-primary-button {
