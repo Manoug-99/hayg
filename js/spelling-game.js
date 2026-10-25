@@ -145,9 +145,71 @@
 
         function renderStats() {
             scoreDisplay.textContent = String(score);
-            livesDisplay.textContent = `${"♥ ".repeat(lives)}${"♡ ".repeat(startingLives - lives)}`.trim();
+            const heartSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+            heartSvg.setAttribute("viewBox", "0 0 24 24");
+            heartSvg.setAttribute("aria-hidden", "true");
+            const heartPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+            heartPath.setAttribute("d", "M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z");
+            heartSvg.append(heartPath);
+            livesDisplay.replaceChildren(...Array.from({ length: startingLives }, (_, index) => {
+                const heart = document.createElement("span");
+                heart.className = `spelling-heart ${index < lives ? "is-filled" : "is-empty"}`;
+                heart.append(heartSvg.cloneNode(true));
+                return heart;
+            }));
             livesDisplay.setAttribute("aria-label", `${lives} կեանք մնաց`);
         }
+
+        function dropLostHeart() {
+            const hearts = livesDisplay.querySelectorAll(".spelling-heart.is-filled");
+            const heart = hearts[hearts.length - 1];
+            if (!heart) return;
+
+            const rect = heart.getBoundingClientRect();
+            const fallingHeart = heart.cloneNode(true);
+            fallingHeart.classList.add("is-dropping");
+            fallingHeart.setAttribute("aria-hidden", "true");
+            fallingHeart.style.left = `${rect.left}px`;
+            fallingHeart.style.top = `${rect.top}px`;
+            fallingHeart.addEventListener("animationend", () => fallingHeart.remove(), { once: true });
+            document.body.append(fallingHeart);
+        }
+
+        function showTimerIncrease() {
+            timerDisplay.classList.remove("is-increased");
+            void timerDisplay.offsetWidth;
+            timerDisplay.classList.add("is-increased");
+
+            const timerWrap = timerDisplay.closest(".spelling-timer-wrap");
+            const previousBonus = timerWrap.querySelector(".spelling-time-bonus");
+            if (previousBonus) previousBonus.remove();
+
+            const bonus = document.createElement("span");
+            bonus.className = "spelling-time-bonus";
+            bonus.setAttribute("aria-hidden", "true");
+            bonus.textContent = "+2s";
+            timerWrap.append(bonus);
+            bonus.addEventListener("animationend", () => bonus.remove(), { once: true });
+        }
+
+        function showScoreIncrease() {
+            scoreDisplay.classList.remove("is-increased");
+            void scoreDisplay.offsetWidth;
+            scoreDisplay.classList.add("is-increased");
+
+            const scoreWrap = scoreDisplay.closest(".spelling-score-wrap");
+            const previousBonus = scoreWrap.querySelector(".spelling-score-bonus");
+            if (previousBonus) previousBonus.remove();
+
+            const bonus = document.createElement("span");
+            bonus.className = "spelling-score-bonus";
+            bonus.setAttribute("aria-hidden", "true");
+            bonus.textContent = "+10";
+            scoreWrap.append(bonus);
+            bonus.addEventListener("animationend", () => bonus.remove(), { once: true });
+        }
+
+        renderStats();
 
         function unlockAudio() {
             const AudioContextClass = window.AudioContext || window.webkitAudioContext;
@@ -401,13 +463,16 @@
             if (isCorrect) {
                 correctCount++;
                 score += 10;
+                showScoreIncrease();
                 deadline = Math.min(deadline + 2000, Date.now() + maxTime * 1000);
-                feedbackDisplay.textContent = "Ճիշդ պատասխան։";
+                showTimerIncrease();
+                feedbackDisplay.textContent = "";
                 feedbackDisplay.classList.add("is-correct");
             } else {
                 wrongCount++;
                 lives--;
-                feedbackDisplay.textContent = "Սխալ պատասխան։";
+                dropLostHeart();
+                feedbackDisplay.textContent = "";
                 feedbackDisplay.classList.add("is-wrong");
             }
             renderStats();
