@@ -1,0 +1,7 @@
+{
+  "mcpServers": {
+    "raylight": {
+      "serverUrl": "https://api.raylight.app/mcp"
+    }
+  }
+}
