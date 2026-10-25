@@ -131,15 +131,100 @@
     font-variant-numeric: tabular-nums;
 }
 
-.spelling-lives-wrap strong {
+.spelling-timer-wrap {
+    position: relative;
+}
+
+.spelling-timer-wrap strong.is-increased {
+    animation: spelling-time-bump 520ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.spelling-score-wrap {
+    position: relative;
+}
+
+.spelling-score-wrap strong.is-increased {
+    display: inline-block;
+    animation: spelling-score-bump 520ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.spelling-score-bonus {
+    position: absolute;
+    top: 0;
+    right: 0;
     color: var(--accent);
-    letter-spacing: 0.08em;
+    font-size: 0.85rem;
+    font-weight: 800;
+    pointer-events: none;
+    animation: spelling-time-float 850ms ease-out both;
+}
+
+.spelling-time-bonus {
+    position: absolute;
+    top: 0;
+    right: 0;
+    color: var(--accent);
+    font-size: 0.85rem;
+    font-weight: 800;
+    pointer-events: none;
+    animation: spelling-time-float 850ms ease-out both;
+}
+
+.spelling-lives-wrap strong {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    color: var(--accent);
     white-space: nowrap;
+}
+
+.spelling-heart {
+    display: inline-grid;
+    width: 0.95em;
+    height: 0.95em;
+    place-items: center;
+    color: var(--accent);
+}
+
+.spelling-heart svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+}
+
+.spelling-heart.is-filled svg {
+    fill: currentColor;
+    filter: drop-shadow(0 2px 3px rgba(236, 72, 153, 0.28));
+}
+
+.spelling-heart.is-empty {
+    color: var(--surface-border);
+}
+
+.spelling-heart.is-empty svg {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.6;
+}
+
+.spelling-heart.is-dropping {
+    position: fixed;
+    z-index: 10;
+    width: 1.5rem;
+    height: 1.5rem;
+    margin: 0;
+    pointer-events: none;
+    animation: spelling-heart-drop 720ms cubic-bezier(0.45, 0, 0.8, 0.35) forwards;
 }
 
 .spelling-timer-wrap strong.is-low {
     color: #dc2626;
     animation: spelling-pulse 600ms ease-in-out infinite alternate;
+}
+
+.spelling-timer-wrap strong.is-low.is-increased {
+    animation: spelling-time-bump 520ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .spelling-category {
@@ -455,6 +540,39 @@
     to { transform: scale(1.06); }
 }
 
+@keyframes spelling-heart-drop {
+    0% {
+        opacity: 1;
+        transform: translateY(0) rotate(0) scale(1);
+    }
+    35% {
+        opacity: 1;
+        transform: translateY(28px) rotate(20deg) scale(1.15);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(120px) rotate(95deg) scale(0.75);
+    }
+}
+
+@keyframes spelling-time-bump {
+    0% { transform: scale(1); }
+    35% { transform: scale(1.28); text-shadow: 0 0 16px rgba(236, 72, 153, 0.55); }
+    100% { transform: scale(1); }
+}
+
+@keyframes spelling-score-bump {
+    0% { transform: scale(1); }
+    35% { transform: scale(1.32); color: var(--accent); text-shadow: 0 0 18px rgba(236, 72, 153, 0.65); }
+    100% { transform: scale(1); }
+}
+
+@keyframes spelling-time-float {
+    0% { opacity: 0; transform: translateY(8px) scale(0.85); }
+    20% { opacity: 1; }
+    100% { opacity: 0; transform: translateY(-28px) scale(1); }
+}
+
 @keyframes spelling-record-pop {
     0% { transform: scale(0.92); }
     55% { transform: scale(1.06); }
@@ -538,6 +656,12 @@
         transition: none;
     }
 
+    .spelling-heart.is-dropping,
+    .spelling-score-bonus,
+    .spelling-time-bonus,
+    .spelling-score-wrap strong.is-increased,
+    .spelling-timer-wrap strong.is-increased,
+    .spelling-timer-wrap strong.is-low.is-increased,
     .spelling-timer-wrap strong.is-low,
     .spelling-personal-best.is-new-record,
     .spelling-question.answer-correct,
