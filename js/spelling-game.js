@@ -456,6 +456,7 @@
             questionDisplay.classList.add(isCorrect ? "answer-correct" : "answer-wrong");
             const buttons = [...choicesContainer.querySelectorAll("button")];
             buttons.forEach(button => {
+                button.disabled = true;
                 if (button.dataset.answer === answer) button.classList.add("is-correct");
                 if (button.dataset.answer === letter && !isCorrect) button.classList.add("is-wrong");
             });
