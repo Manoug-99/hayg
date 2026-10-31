@@ -815,7 +815,8 @@ window.SPELLING_QUESTION_SECTIONS = {
         },
         {
             "word": "թոյլ",
-            "index": 0
+            "index": 0,
+            "hint": "կակուղ"
         },
         {
             "word": "թանձր",
@@ -2734,7 +2735,7 @@ window.SPELLING_QUESTION_SECTIONS = {
             "index": 0
         },
         {
-            "word": "բեռնաիր",
+            "word": "բեռնակիր",
             "index": 0
         },
         {
@@ -3037,15 +3038,7 @@ window.SPELLING_QUESTION_SECTIONS = {
         },
         {
             "word": "որոտում",
-            "index": 0
-        },
-        {
-            "word": "որոտում",
             "index": 2
-        },
-        {
-            "word": "որոտում",
-            "index": 4
         },
         {
             "word": "աթոռ",
@@ -3136,10 +3129,6 @@ window.SPELLING_QUESTION_SECTIONS = {
             "index": 3
         },
         {
-            "word": "հաղորդակցութիւն",
-            "index": 9
-        },
-        {
             "word": "թոշակ",
             "index": 1
         },
@@ -3178,10 +3167,6 @@ window.SPELLING_QUESTION_SECTIONS = {
         {
             "word": "խորհուրդ",
             "index": 1
-        },
-        {
-            "word": "խորհուրդ",
-            "index": 4
         },
         {
             "word": "կողով",
@@ -3233,15 +3218,7 @@ window.SPELLING_QUESTION_SECTIONS = {
         },
         {
             "word": "ողորմութիւն",
-            "index": 0
-        },
-        {
-            "word": "ողորմութիւն",
             "index": 2
-        },
-        {
-            "word": "ողորմութիւն",
-            "index": 5
         },
         {
             "word": "ցոլք",
@@ -3337,10 +3314,6 @@ window.SPELLING_QUESTION_SECTIONS = {
         },
         {
             "word": "լուսամփոփ",
-            "index": 1
-        },
-        {
-            "word": "լուսամփոփ",
             "index": 7
         },
         {
@@ -3386,10 +3359,6 @@ window.SPELLING_QUESTION_SECTIONS = {
         {
             "word": "խորունկ",
             "index": 1
-        },
-        {
-            "word": "խորունկ",
-            "index": 3
         },
         {
             "word": "սոխ",
@@ -3444,10 +3413,6 @@ window.SPELLING_QUESTION_SECTIONS = {
             "index": 5
         },
         {
-            "word": "ռմբակոծում",
-            "index": 7
-        },
-        {
             "word": "անճոռնի",
             "index": 3
         },
@@ -3490,10 +3455,6 @@ window.SPELLING_QUESTION_SECTIONS = {
         {
             "word": "շնորհակալութիւն",
             "index": 2
-        },
-        {
-            "word": "շնորհակալութիւն",
-            "index": 9
         },
         {
             "word": "մոխրագոյն",
@@ -6721,10 +6682,6 @@ window.SPELLING_QUESTION_SECTIONS = {
             "index": 2
         },
         {
-            "word": "սեւուկ",
-            "index": 4
-        },
-        {
             "word": "առաւօտ",
             "index": 3
         },
@@ -6761,20 +6718,8 @@ window.SPELLING_QUESTION_SECTIONS = {
             "index": 1
         },
         {
-            "word": "ծաւալուն",
-            "index": 2
-        },
-        {
-            "word": "ծաւալուն",
-            "index": 6
-        },
-        {
             "word": "ծաւալում",
             "index": 2
-        },
-        {
-            "word": "ծաւալում",
-            "index": 6
         },
         {
             "word": "յաւիտենական",
@@ -6831,10 +6776,6 @@ window.SPELLING_QUESTION_SECTIONS = {
         {
             "word": "արեւմուտք",
             "index": 3
-        },
-        {
-            "word": "արեւմուտք",
-            "index": 6
         },
         {
             "word": "հարեւան",
@@ -6941,10 +6882,6 @@ window.SPELLING_QUESTION_SECTIONS = {
             "index": 2
         },
         {
-            "word": "խաւարում",
-            "index": 6
-        },
-        {
             "word": "ձաւար",
             "index": 2
         },
@@ -6955,10 +6892,6 @@ window.SPELLING_QUESTION_SECTIONS = {
         {
             "word": "յաւելում",
             "index": 2
-        },
-        {
-            "word": "յաւելում",
-            "index": 6
         },
         {
             "word": "հաւնիլ",
@@ -7070,10 +7003,6 @@ window.SPELLING_QUESTION_SECTIONS = {
         },
         {
             "word": "ուխտաւոր",
-            "index": 1
-        },
-        {
-            "word": "ուխտաւոր",
             "index": 5
         },
         {
@@ -7125,10 +7054,6 @@ window.SPELLING_QUESTION_SECTIONS = {
             "index": 1
         },
         {
-            "word": "աւիւն",
-            "index": 3
-        },
-        {
             "word": "յարատեւ",
             "index": 6
         },
@@ -7137,6 +7062,7 @@ window.SPELLING_QUESTION_SECTIONS = {
             "index": 3
         }
     ],
+    
     "Հ թէ Յ": [
         {
             "word": "հանգոյց",
