@@ -17,28 +17,50 @@
     const startingLives = 3;
     const answerDelay = 350;
 
+    function normalizeQuestionIndex(index) {
+        if (typeof index === "number") return index;
+        if (typeof index === "string" && /^\d+$/.test(index)) return Number(index);
+        return NaN;
+    }
+
+    function normalizeQuestionCategory(category) {
+        if (categories[category]) return category;
+        const letters = category.split(" թէ ");
+        if (letters.length !== 2) return category;
+        const reversedCategory = `${letters[1]} թէ ${letters[0]}`;
+        return categories[reversedCategory] ? reversedCategory : category;
+    }
+
     function validateQuestionBank(questions) {
         if (!Array.isArray(questions) || questions.length === 0) {
             throw new Error("The spelling question bank is empty.");
         }
 
         const ids = new Set();
-        const words = new Set();
+        const questionsSeen = new Set();
         const counts = Object.fromEntries(categoriesInOrder.map(category => [category, 0]));
 
         for (const question of questions) {
             const pair = categories[question.category];
             if (!pair) throw new Error(`Unknown spelling category: ${question.category}`);
             if (!question.id || ids.has(question.id)) throw new Error(`Missing or duplicate question ID: ${question.id}`);
-            if (!question.word || words.has(question.word)) throw new Error(`Missing or duplicate word: ${question.word}`);
-            if (!Number.isInteger(question.index) || question.index < 0 || question.index >= question.word.length) {
+            if (!question.word) throw new Error(`Missing word: ${question.word}`);
+            const index = normalizeQuestionIndex(question.index);
+            if (!Number.isInteger(index) || index < 0 || index >= question.word.length) {
                 throw new Error(`Invalid missing-letter position for ${question.id}`);
             }
-            if (question.word[question.index] !== pair[0] && question.word[question.index] !== pair[1]) {
+            if (question.hint !== undefined && typeof question.hint !== "string") {
+                throw new Error(`Invalid hint for ${question.id}`);
+            }
+            if (question.word[index] !== pair[0] && question.word[index] !== pair[1]) {
                 throw new Error(`Question ${question.id} does not test its assigned category.`);
             }
+            const questionKey = `${question.category}\0${question.word}\0${index}`;
+            if (questionsSeen.has(questionKey)) {
+                throw new Error(`Duplicate spelling question: ${question.word} at index ${index}`);
+            }
             ids.add(question.id);
-            words.add(question.word);
+            questionsSeen.add(questionKey);
             counts[question.category]++;
         }
 
@@ -56,8 +78,9 @@
         const questions = Object.entries(sections).flatMap(([category, entries]) =>
             entries.map((entry, index) => ({
                 ...entry,
+                index: normalizeQuestionIndex(entry.index),
                 id: `${category}-${index + 1}`,
-                category
+                category: normalizeQuestionCategory(category)
             }))
         );
         try {
@@ -73,6 +96,8 @@
         const scoreDisplay = document.getElementById("spelling-score");
         const categoryDisplay = document.getElementById("spelling-category");
         const questionDisplay = document.getElementById("spelling-question");
+        const hintDisplay = document.getElementById("spelling-hint");
+        const hintTextDisplay = document.getElementById("spelling-hint-text");
         const choicesContainer = document.getElementById("spelling-choices");
         const feedbackDisplay = document.getElementById("spelling-feedback");
         const livesDisplay = document.getElementById("spelling-lives");
@@ -82,6 +107,9 @@
         const personalBestCard = document.getElementById("spelling-personal-best-card");
         const personalBestDisplay = document.getElementById("spelling-final-best");
         const recordNote = document.getElementById("spelling-record-note");
+        const mistakesSection = document.getElementById("spelling-mistakes");
+        const mistakesList = document.getElementById("spelling-mistakes-list");
+        const noMistakesMessage = document.getElementById("spelling-no-mistakes");
         const xpCounter = document.getElementById("spelling-xp-counter");
         const xpDescription = document.getElementById("spelling-xp-description");
         const xpRemaining = document.getElementById("spelling-xp-remaining");
@@ -98,6 +126,7 @@
         let score = 0;
         let correctCount = 0;
         let wrongCount = 0;
+        let mistakes = [];
         let lives = startingLives;
         let deck = [];
         let currentQuestion = null;
@@ -116,6 +145,56 @@
                 [result[i], result[j]] = [result[j], result[i]];
             }
             return result;
+        }
+
+        function formatDisplayWord(word) {
+            const lowercaseWord = word.toLocaleLowerCase("hy");
+            return lowercaseWord
+                ? lowercaseWord[0].toLocaleUpperCase("hy") + lowercaseWord.slice(1)
+                : lowercaseWord;
+        }
+
+        function fitQuestionWord() {
+            questionDisplay.style.fontSize = "";
+            const availableWidth = questionDisplay.clientWidth;
+            const wordWidth = questionDisplay.scrollWidth;
+            if (availableWidth > 0 && wordWidth > availableWidth) {
+                const fontSize = Number.parseFloat(window.getComputedStyle(questionDisplay).fontSize);
+                questionDisplay.style.fontSize = `${fontSize * availableWidth / wordWidth}px`;
+            }
+        }
+
+        function appendHighlightedLetter(container, word, index, className) {
+            const displayedWord = formatDisplayWord(word);
+            container.append(document.createTextNode(displayedWord.slice(0, index)));
+            const letter = document.createElement("span");
+            letter.className = className;
+            letter.textContent = displayedWord[index];
+            container.append(letter, document.createTextNode(displayedWord.slice(index + 1)));
+        }
+
+        function renderMistakes() {
+            mistakesList.replaceChildren(...mistakes.map(({ question, chosenLetter }) => {
+                const index = Number(question.index);
+                const incorrectWord = question.word.slice(0, index)
+                    + chosenLetter
+                    + question.word.slice(index + 1);
+                const item = document.createElement("li");
+                const mistaken = document.createElement("span");
+                mistaken.className = "spelling-mistaken-word";
+                appendHighlightedLetter(mistaken, incorrectWord, index, "spelling-mistaken-letter");
+                const arrow = document.createElement("span");
+                arrow.className = "spelling-mistake-arrow";
+                arrow.setAttribute("aria-hidden", "true");
+                arrow.textContent = "→";
+                const correction = document.createElement("strong");
+                correction.className = "spelling-corrected-word";
+                appendHighlightedLetter(correction, question.word, index, "spelling-correct-letter");
+                item.append(mistaken, arrow, correction);
+                return item;
+            }));
+            mistakesSection.hidden = mistakes.length === 0;
+            noMistakesMessage.hidden = mistakes.length > 0;
         }
 
         function createDeck() {
@@ -320,23 +399,34 @@
             const answer = currentQuestion.word[currentQuestion.index];
             const alternatives = pair.filter(letter => letter !== answer);
             const choices = shuffled([answer, ...alternatives]);
+            const word = currentQuestion.word.toLocaleLowerCase("hy");
 
             categoryDisplay.textContent = currentQuestion.category;
+            const hint = typeof currentQuestion.hint === "string" ? currentQuestion.hint.trim() : "";
+            hintTextDisplay.textContent = hint;
+            hintDisplay.hidden = !hint;
             questionDisplay.replaceChildren();
-            const before = document.createTextNode(currentQuestion.word.slice(0, currentQuestion.index).toLocaleUpperCase("hy"));
+            const beforeText = word.slice(0, currentQuestion.index);
+            const before = document.createTextNode(beforeText
+                ? beforeText[0].toLocaleUpperCase("hy") + beforeText.slice(1)
+                : "");
             const missing = document.createElement("span");
             missing.className = "missing-letter";
             missing.textContent = "＿";
             missing.setAttribute("aria-label", "պակասող տառ");
-            const after = document.createTextNode(currentQuestion.word.slice(currentQuestion.index + 1).toLocaleUpperCase("hy"));
+            const after = document.createTextNode(word.slice(currentQuestion.index + 1));
             questionDisplay.append(before, missing, after);
+            fitQuestionWord();
 
             choicesContainer.replaceChildren(...choices.map((letter, index) => {
                 const button = document.createElement("button");
                 button.className = "spelling-choice";
                 button.type = "button";
-                button.textContent = letter.toLocaleUpperCase("hy");
-                button.setAttribute("aria-label", `Ընտրել ${letter}`);
+                const displayedLetter = currentQuestion.index === 0
+                    ? letter.toLocaleUpperCase("hy")
+                    : letter.toLocaleLowerCase("hy");
+                button.textContent = displayedLetter;
+                button.setAttribute("aria-label", `Ընտրել ${displayedLetter}`);
                 button.dataset.answer = letter;
                 button.addEventListener("click", () => answerQuestion(letter));
                 button.dataset.shortcut = String(index + 1);
@@ -362,6 +452,7 @@
             document.getElementById("spelling-final-score").textContent = String(score);
             document.getElementById("spelling-final-correct").textContent = String(correctCount);
             document.getElementById("spelling-final-wrong").textContent = String(wrongCount);
+            renderMistakes();
             personalBestCard.classList.remove("is-new-record");
             recordNote.textContent = "";
             resultsOverlay.hidden = false;
@@ -470,6 +561,7 @@
                 feedbackDisplay.classList.add("is-correct");
             } else {
                 wrongCount++;
+                mistakes.push({ question: currentQuestion, chosenLetter: letter });
                 lives--;
                 dropLostHeart();
                 feedbackDisplay.textContent = "";
@@ -542,6 +634,10 @@
             score = 0;
             correctCount = 0;
             wrongCount = 0;
+            mistakes = [];
+            mistakesList.replaceChildren();
+            mistakesSection.hidden = true;
+            noMistakesMessage.hidden = true;
             lives = startingLives;
             saveAttempted = false;
             deck = createDeck();
@@ -567,6 +663,7 @@
 
         startButtons[0].addEventListener("click", startGame);
         startButtons[1].addEventListener("click", startGame);
+        window.addEventListener("resize", fitQuestionWord);
         document.addEventListener("keydown", event => {
             if (!running || answering || (event.key !== "1" && event.key !== "2")) return;
             event.preventDefault();

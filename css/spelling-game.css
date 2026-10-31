@@ -239,13 +239,44 @@
 }
 
 .spelling-question {
+    width: 100%;
     min-height: 1.5em;
     margin: 0 auto 28px;
     text-align: center;
-    font-size: clamp(2.3rem, 11vw, 5rem);
+    font-size: clamp(2rem, 9vw, 4rem);
     font-weight: 800;
-    letter-spacing: 0.08em;
-    overflow-wrap: anywhere;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+}
+
+.spelling-hint {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 9px;
+    width: fit-content;
+    max-width: 100%;
+    height: 3.75rem;
+    box-sizing: border-box;
+    margin: -12px auto 22px;
+    padding: 10px 16px;
+    border: 1px solid var(--surface-border);
+    border-radius: 14px;
+    background: rgba(236, 72, 153, 0.08);
+    color: var(--text-muted);
+    font-size: clamp(0.88rem, 3.5vw, 1rem);
+    font-weight: 600;
+    line-height: 1.55;
+    text-align: left;
+    overflow-y: auto;
+}
+
+.spelling-hint[hidden] {
+    visibility: hidden;
+}
+
+.spelling-hint > span:first-child {
+    flex: 0 0 auto;
 }
 
 .spelling-question .missing-letter {
@@ -332,6 +363,7 @@
     display: grid;
     place-items: center;
     padding: 18px;
+    overflow-y: auto;
     background: rgba(255, 241, 247, 0.86);
     backdrop-filter: blur(12px);
 }
@@ -448,6 +480,64 @@
 .spelling-result-grid strong {
     color: var(--text-color);
     font-size: 1.3rem;
+}
+
+.spelling-mistakes {
+    margin: 0 0 16px;
+    text-align: left;
+}
+
+.spelling-mistakes h3 {
+    margin: 0 0 8px;
+    color: var(--text-color);
+    font-size: 0.95rem;
+    text-align: center;
+}
+
+.spelling-mistakes ul {
+    display: grid;
+    gap: 6px;
+    max-height: 150px;
+    overflow-y: auto;
+    margin: 0;
+    padding: 0 8px;
+    list-style: none;
+}
+
+.spelling-mistakes li {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 10px;
+    padding: 7px 10px;
+    border: 1px solid var(--surface-border);
+    border-radius: 10px;
+    color: var(--text-muted);
+}
+
+.spelling-mistake-arrow {
+    color: var(--text-muted);
+}
+
+.spelling-mistaken-letter {
+    color: #dc2626;
+}
+
+.spelling-correct-letter {
+    color: #16a34a;
+}
+
+#spelling-game-body.dark-mode .spelling-mistaken-letter {
+    color: #f87171;
+}
+
+#spelling-game-body.dark-mode .spelling-correct-letter {
+    color: #4ade80;
+}
+
+.spelling-no-mistakes {
+    margin: 0 0 12px;
+    font-weight: 700;
 }
 
 .spelling-personal-best {

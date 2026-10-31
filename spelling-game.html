@@ -17,7 +17,6 @@
     <main class="spelling-shell">
         <header class="spelling-header">
             <a class="spelling-back" href="index.html#spelling-game-card" aria-label="Վերադառնալ խաղերուն">←</a>
-            
             <h1>Ճիշդ Գրէ՛</h1>
         </header>
 
@@ -44,6 +43,10 @@
 
             <p class="spelling-category" id="spelling-category"></p>
             <div class="spelling-question" id="spelling-question" aria-live="polite"></div>
+            <p class="spelling-hint" id="spelling-hint" aria-live="polite" hidden>
+                <span aria-hidden="true">💡</span>
+                <span id="spelling-hint-text"></span>
+            </p>
             <div class="spelling-choices" id="spelling-choices" role="group" aria-label="Պատասխանի ընտրութիւններ"></div>
             <p class="spelling-feedback spelling-sr-only" id="spelling-feedback" aria-live="polite"></p>
 
@@ -72,6 +75,11 @@
                         <div><span>Ճիշդ պատասխաններ</span><strong id="spelling-final-correct">0</strong></div>
                         <div><span>Սխալ պատասխաններ</span><strong id="spelling-final-wrong">0</strong></div>
                     </div>
+                    <section class="spelling-mistakes" id="spelling-mistakes" hidden aria-labelledby="spelling-mistakes-title">
+                        <h3 id="spelling-mistakes-title">Սխալներ</h3>
+                        <ul id="spelling-mistakes-list"></ul>
+                    </section>
+                    <p class="spelling-no-mistakes" id="spelling-no-mistakes" hidden></p>
                     <p class="spelling-record-note" id="spelling-record-note" aria-live="polite"></p>
                     <p class="spelling-save-status" id="spelling-save-status" aria-live="polite"></p>
                     <div class="spelling-result-actions">
