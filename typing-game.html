@@ -30,14 +30,16 @@
         <section id="typing-start-overlay" class="typing-start-overlay" role="dialog" aria-modal="true" aria-labelledby="typing-start-title">
             <div class="typing-start-card">
                 <a href="index.html#typing-game-card" class="back-button typing-overlay-back" aria-label="Վերադառնալ խաղերու ցանկին">←</a>
+                <div class="typing-start-mark" aria-hidden="true"></div>
                 <p class="typing-start-kicker"></p>
-                <h2 id="typing-start-title">Ընտրէ ժամանակը</h2>
-                <p class="typing-start-description"></p>
-                <p class="typing-start-best">Լաւագոյն նիշ <strong id="typing-start-best">0</strong></p>
+                <h2 id="typing-start-title">Արագատիպ</h2>
+                <p class="typing-start-description"><br>Տպէ՛ ցուցադրուած բառերը որքան կարելի է արագ եւ ճշգրիտ։</p>
+                <p class="typing-start-best"><span>Լաւագոյն նիշ</span><strong id="typing-start-best">0</strong></p>
+                <p class="typing-duration-label">Խաղի տեւողութիւնը</p>
                 <div class="typing-duration-options" role="group" aria-label="Ընտրէ խաղի տեւողութիւնը">
-                    <button class="typing-duration-option" type="button" data-duration="60" aria-pressed="false">1 վայրկեան</button>
-                    <button class="typing-duration-option is-selected" type="button" data-duration="120" aria-pressed="true">2 վայրկեան</button>
-                    <button class="typing-duration-option" type="button" data-duration="300" aria-pressed="false">5 վայրկեան</button>
+                    <button class="typing-duration-option" type="button" data-duration="60" aria-label="1 վայրկեան" aria-pressed="false"><span>1</span><small>վայրկեան</small></button>
+                    <button class="typing-duration-option is-selected" type="button" data-duration="120" aria-label="2 վայրկեան" aria-pressed="true"><span>2</span><small>վայրկեան</small></button>
+                    <button class="typing-duration-option" type="button" data-duration="300" aria-label="5 վայրկեան" aria-pressed="false"><span>5</span><small>վայրկեան</small></button>
                 </div>
                 <select id="typing-timer-select" class="level-select" aria-label="Ընտրէ խաղի տեւողութիւնը" data-custom-dropdown="true" hidden>
                     <option value="60">1 վայրկեան</option>

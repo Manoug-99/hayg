@@ -147,13 +147,6 @@
             return result;
         }
 
-        function formatDisplayWord(word) {
-            const lowercaseWord = word.toLocaleLowerCase("hy");
-            return lowercaseWord
-                ? lowercaseWord[0].toLocaleUpperCase("hy") + lowercaseWord.slice(1)
-                : lowercaseWord;
-        }
-
         function fitQuestionWord() {
             questionDisplay.style.fontSize = "";
             const availableWidth = questionDisplay.clientWidth;
@@ -165,12 +158,40 @@
         }
 
         function appendHighlightedLetter(container, word, index, className) {
-            const displayedWord = formatDisplayWord(word);
-            container.append(document.createTextNode(displayedWord.slice(0, index)));
+            const letters = Array.from(word.toLocaleLowerCase("hy"));
+            const prefix = letters.slice(0, index);
+            if (prefix.length > 0) {
+                prefix[0] = prefix[0].toLocaleUpperCase("hy");
+            }
+            container.append(document.createTextNode(prefix.join("")));
             const letter = document.createElement("span");
             letter.className = className;
-            letter.textContent = displayedWord[index];
-            container.append(letter, document.createTextNode(displayedWord.slice(index + 1)));
+            const highlightedLetter = letters[index] || "";
+            letter.textContent = index === 0
+                ? highlightedLetter.toLocaleUpperCase("hy")
+                : highlightedLetter;
+            container.append(letter, document.createTextNode(letters.slice(index + 1).join("")));
+        }
+
+        function fitMistakeWords() {
+            mistakesList.querySelectorAll("li").forEach(item => {
+                const words = item.querySelectorAll(".spelling-mistaken-word, .spelling-corrected-word");
+                words.forEach(word => { word.style.fontSize = ""; });
+                const availableWidth = item.clientWidth
+                    - Number.parseFloat(window.getComputedStyle(item).paddingLeft)
+                    - Number.parseFloat(window.getComputedStyle(item).paddingRight);
+                const wordsWidth = [...words].reduce((width, word) => width + word.getBoundingClientRect().width, 0);
+                const arrow = item.querySelector(".spelling-mistake-arrow");
+                const arrowWidth = arrow ? arrow.getBoundingClientRect().width : 0;
+                const style = window.getComputedStyle(item);
+                const gaps = Number.parseFloat(style.columnGap) * (item.children.length - 1);
+                const contentWidth = wordsWidth + arrowWidth + gaps;
+                if (availableWidth > 0 && contentWidth > availableWidth) {
+                    const fontSize = Number.parseFloat(window.getComputedStyle(words[0]).fontSize);
+                    const fittedFontSize = fontSize * availableWidth / contentWidth;
+                    words.forEach(word => { word.style.fontSize = `${fittedFontSize}px`; });
+                }
+            });
         }
 
         function renderMistakes() {
@@ -193,6 +214,7 @@
                 item.append(mistaken, arrow, correction);
                 return item;
             }));
+            fitMistakeWords();
             mistakesSection.hidden = mistakes.length === 0;
             noMistakesMessage.hidden = mistakes.length > 0;
         }
@@ -452,10 +474,10 @@
             document.getElementById("spelling-final-score").textContent = String(score);
             document.getElementById("spelling-final-correct").textContent = String(correctCount);
             document.getElementById("spelling-final-wrong").textContent = String(wrongCount);
+            resultsOverlay.hidden = false;
             renderMistakes();
             personalBestCard.classList.remove("is-new-record");
             recordNote.textContent = "";
-            resultsOverlay.hidden = false;
 
             if (saveAttempted) return;
             saveAttempted = true;
@@ -664,6 +686,7 @@
         startButtons[0].addEventListener("click", startGame);
         startButtons[1].addEventListener("click", startGame);
         window.addEventListener("resize", fitQuestionWord);
+        window.addEventListener("resize", fitMistakeWords);
         document.addEventListener("keydown", event => {
             if (!running || answering || (event.key !== "1" && event.key !== "2")) return;
             event.preventDefault();

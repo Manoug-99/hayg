@@ -618,8 +618,8 @@
     transform: translate(-50%, -50%) scale(0.9);
     padding: 12px 24px;
     border-radius: 14px;
-    background: linear-gradient(135deg, #2d1f18, #18100c);
-    color: #fef3c7;
+    background: linear-gradient(135deg, #fffdf5, #fef3c7);
+    color: #451a03;
     border: 1.5px solid rgba(245, 158, 11, 0.4);
     font-weight: 700;
     font-size: 1.1rem;
@@ -631,8 +631,8 @@
 }
 
 #spelling-bee-body.dark-mode .game-message {
-    background: linear-gradient(135deg, #fffdf5, #fef3c7);
-    color: #451a03;
+    background: linear-gradient(135deg, #2d1f18, #18100c);
+    color: #fef3c7;
     border-color: #f59e0b;
 }
 

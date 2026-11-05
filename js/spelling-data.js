@@ -7527,7 +7527,6 @@ window.SPELLING_QUESTION_SECTIONS = {
             "index": 3
         }
     ],
-    
     "Հ թէ Յ": [
         {
             "word": "հանգոյց",
@@ -8387,4 +8386,5 @@ window.SPELLING_QUESTION_SECTIONS = {
             "word": "բազայայտ",
             "index": 6
         }
+    ]
 };

@@ -497,15 +497,15 @@
 .spelling-mistakes ul {
     display: grid;
     gap: 6px;
-    max-height: 150px;
-    overflow-y: auto;
     margin: 0;
     padding: 0 8px;
     list-style: none;
+    overflow: visible;
 }
 
 .spelling-mistakes li {
     display: flex;
+    min-width: 0;
     align-items: baseline;
     justify-content: center;
     gap: 10px;
@@ -513,6 +513,13 @@
     border: 1px solid var(--surface-border);
     border-radius: 10px;
     color: var(--text-muted);
+}
+
+.spelling-mistaken-word,
+.spelling-corrected-word,
+.spelling-mistake-arrow {
+    flex: 0 0 auto;
+    white-space: nowrap;
 }
 
 .spelling-mistake-arrow {
@@ -686,7 +693,7 @@
     }
 
     .spelling-panel {
-        min-height: min(620px, calc(100dvh - 100px));
+        min-height: min(620px, calc(100dvh - 106px));
         padding: 20px 16px;
         border-radius: 22px;
     }
@@ -728,6 +735,12 @@
     .spelling-question {
         margin-bottom: 12px;
         font-size: clamp(2rem, 8vh, 3.5rem);
+    }
+}
+
+@media (max-height: 700px) {
+    .spelling-mistakes li {
+        padding-block: 3px;
     }
 
     .spelling-choice {
