@@ -9,12 +9,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     const accuracyDisplay = document.getElementById("accuracy-display");
     const keyboardContainer = document.getElementById("keyboard-container");
     const startBestDisplay = document.getElementById("typing-start-best");
-    const startBestSpeedDisplay = document.getElementById("typing-start-best-speed");
     const bestScoreDisplay = document.getElementById("typing-best-score");
     const bestSpeedDisplay = document.getElementById("typing-best-speed");
     const recordNote = document.getElementById("typing-record-note");
     const resultCard = document.getElementById("typing-result-card");
     const timerSelect = document.getElementById("typing-timer-select");
+    const durationOptions = [...document.querySelectorAll(".typing-duration-option")];
     const resultDuration = document.getElementById("typing-result-duration");
     const resultOverlay = document.getElementById("typing-result-overlay");
 
@@ -57,8 +57,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     function renderSelectedBest() {
         const duration = Number(timerSelect.value);
         const best = bestScores[duration] || 0;
+        startBestDisplay.textContent = String(best);
         bestScoreDisplay.textContent = String(best);
         bestSpeedDisplay.textContent = String(bestSpeed);
+        durationOptions.forEach(option => {
+            const selected = Number(option.dataset.duration) === duration;
+            option.classList.toggle("is-selected", selected);
+            option.setAttribute("aria-pressed", String(selected));
+        });
     }
 
     async function loadPersonalBest() {
@@ -420,8 +426,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (startBtn && startOverlay) {
         startBtn.addEventListener("click", (e) => {
             resetGame();
+            const keyboardSettingsButton = document.querySelector("#typing-start-overlay .keyboard-settings-button");
+            if (keyboardSettingsButton) {
+                document.querySelector(".typing-container .game-header")?.appendChild(keyboardSettingsButton);
+            }
             startOverlay.classList.add("hidden");
             isGameStarted = true;
+            startGame();
             e.currentTarget.blur();
         });
     }
@@ -431,17 +442,28 @@ document.addEventListener("DOMContentLoaded", async () => {
         retryBtn.addEventListener("click", (e) => {
             resetGame();
             isGameStarted = true;
+            startGame();
             e.currentTarget.blur();
         });
     }
 
     document.getElementById("typing-change-duration").addEventListener("click", () => {
         resultOverlay.classList.add("hidden");
+        const keyboardSettingsButton = document.querySelector(".typing-container .game-header .keyboard-settings-button");
+        if (keyboardSettingsButton) {
+            startOverlay.querySelector(".typing-start-card")?.appendChild(keyboardSettingsButton);
+        }
         startOverlay.classList.remove("hidden");
-        timerSelect.focus();
+        durationOptions.find(option => Number(option.dataset.duration) === Number(timerSelect.value))?.focus();
     });
 
     timerSelect.addEventListener("change", renderSelectedBest);
+    durationOptions.forEach(option => {
+        option.addEventListener("click", () => {
+            timerSelect.value = option.dataset.duration;
+            timerSelect.dispatchEvent(new Event("change", { bubbles: true }));
+        });
+    });
 
     if (select) {
         maxTimer = parseInt(select.value);

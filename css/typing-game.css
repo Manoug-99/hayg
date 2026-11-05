@@ -85,6 +85,144 @@
     transition: all 0.3s ease;
 }
 
+.typing-start-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: max(20px, env(safe-area-inset-top)) 16px max(20px, env(safe-area-inset-bottom));
+    background: rgba(31, 7, 17, 0.76);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.typing-start-overlay.hidden {
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.typing-overlay-back {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    transform: none;
+    z-index: 1;
+}
+
+.typing-start-card {
+    position: relative;
+    width: min(100%, 430px);
+    padding: clamp(26px, 7vw, 42px);
+    border: 1px solid rgba(251, 113, 133, 0.25);
+    border-radius: 26px;
+    background: linear-gradient(145deg, rgba(62, 16, 36, 0.98), rgba(31, 13, 27, 0.98));
+    color: #fff1f2;
+    text-align: center;
+    box-shadow: 0 28px 80px rgba(0, 0, 0, 0.5), 0 0 48px rgba(225, 29, 72, 0.12);
+}
+
+.typing-start-kicker {
+    margin: 0 0 12px;
+    color: #fda4af;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+}
+
+.typing-start-card h2 {
+    margin: 0;
+    color: #fff1f2;
+    font-size: clamp(1.45rem, 5vw, 1.9rem);
+    line-height: 1.25;
+}
+
+.typing-start-description {
+    margin: 10px 0 24px;
+    color: #fda4af;
+    font-size: 0.92rem;
+    line-height: 1.55;
+}
+
+.typing-duration-options {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    width: 100%;
+    margin: 0;
+}
+
+.typing-duration-option {
+    display: flex;
+    min-width: 0;
+    min-height: 56px;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 6px;
+    border: 1px solid rgba(251, 113, 133, 0.3);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.06);
+    color: #ffe4e8;
+    font: inherit;
+    font-size: clamp(0.78rem, 3.4vw, 0.95rem);
+    font-weight: 700;
+    line-height: 1.2;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+}
+
+.typing-duration-option:hover {
+    transform: translateY(-2px);
+    border-color: rgba(251, 113, 133, 0.72);
+}
+
+.typing-duration-option.is-selected,
+.typing-duration-option[aria-pressed="true"] {
+    border-color: #fb7185;
+    background: rgba(244, 63, 94, 0.22);
+    box-shadow: inset 0 0 0 1px rgba(251, 113, 133, 0.18), 0 8px 20px rgba(225, 29, 72, 0.14);
+    color: #fff1f2;
+}
+
+.typing-duration-option:focus-visible {
+    outline: 3px solid rgba(251, 113, 133, 0.7);
+    outline-offset: 3px;
+}
+
+.typing-start-card .start-btn {
+    width: 100%;
+    max-width: none;
+    min-height: 52px;
+    margin-top: 20px;
+    border-radius: 14px;
+}
+
+.typing-start-best {
+    margin: 0 0 14px;
+    color: #fda4af;
+    font-size: 0.88rem;
+    font-weight: 700;
+    line-height: 1.4;
+}
+
+.typing-start-best strong {
+    display: inline;
+    color: #fff1f2;
+    margin-left: 0.2em;
+    font-size: 1rem;
+    font-weight: 800;
+}
+
+.typing-start-card > .keyboard-settings-button {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+}
+
 #words-display {
     display: flex;
     flex-wrap: wrap;
@@ -267,19 +405,6 @@ body.dark-mode .res-stat-card {
     font-size: 1.1rem;
     font-weight: 700;
     color: var(--accent);
-}
-
-.typing-start-best {
-    font-size: 0.85rem !important;
-    color: var(--accent);
-    font-weight: 700;
-}
-
-.typing-start-best-speed {
-    margin: -6px 0 0;
-    color: var(--text-secondary);
-    font-size: 0.8rem !important;
-    font-weight: 650;
 }
 
 .typing-results-overlay {

@@ -34,7 +34,7 @@
         <div id="board-container">
             <div id="wordle-start-overlay" class="start-overlay">
                 <h2 style="margin-bottom: 15px;">Ընտրէ բարդութիւնը</h2>
-                <select id="wordle-level-select" class="level-select" style="font-size: 16px; padding: 10px; margin: 0; width: 80%;">
+                <select id="wordle-level-select" class="level-select" aria-label="Ընտրէ բառի երկարութիւնը" style="font-size: 16px; padding: 10px; margin: 0; width: 80%;">
                     <option value="3">Դիւրին (3 տառ)</option>
                     <option value="5" selected>Միջին (5 տառ)</option>
                     <option value="7">Դժուար (7 տառ)</option>
@@ -51,6 +51,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/api.js"></script>
     <script src="js/index.js"></script>
+    <script src="js/custom-dropdown.js"></script>
     <script src="js/words.js"></script>
     <script src="js/wordle.js"></script>
     <script src="js/messaging.js"></script>

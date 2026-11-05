@@ -89,6 +89,10 @@ keyboardSettingsButton.setAttribute('aria-label', 'Բացել ստեղնաշար
 
 if (keyboardArea && gameId === 'ztype-game-body' && ztypeStartMenu) {
     ztypeStartMenu.appendChild(keyboardSettingsButton);
+} else if (keyboardArea && gameId === 'typing-game-body') {
+    const typingStartCard = document.querySelector('#typing-start-overlay .typing-start-card');
+    body.classList.add('has-virtual-keyboard');
+    (typingStartCard || gameHeader)?.appendChild(keyboardSettingsButton);
 } else if (keyboardArea && ['wordle-game-body', 'hangman-game-body', 'typing-game-body', 'faces-game-body'].includes(gameId) && gameHeader) {
     body.classList.add('has-virtual-keyboard');
     gameHeader.appendChild(keyboardSettingsButton);

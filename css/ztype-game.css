@@ -604,6 +604,64 @@ body {
     backdrop-filter: blur(5px);
 }
 
+#start-menu .overlay-panel {
+    overflow: visible;
+}
+
+#start-menu .custom-select-dropdown {
+    display: block;
+    width: 100% !important;
+    max-width: none;
+    margin: 15px 0 25px !important;
+    text-align: left;
+}
+
+#start-menu .custom-select-trigger.ztype-select {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100% !important;
+    min-height: 48px;
+    margin: 0;
+    padding: 10px 16px;
+    border: 1px solid rgba(0, 229, 255, 0.35);
+    border-radius: 12px;
+    background: rgba(0, 229, 255, 0.08);
+    color: var(--text-primary);
+    font-size: 16px;
+    text-align: left;
+    cursor: pointer;
+}
+
+#start-menu .custom-select-trigger.ztype-select .custom-select-arrow {
+    display: block;
+    flex: 0 0 9px;
+    width: 9px;
+    height: 9px;
+    border-right: 2px solid var(--neon-cyan);
+    border-bottom: 2px solid var(--neon-cyan);
+}
+
+#start-menu .custom-select-trigger.ztype-select:hover,
+#start-menu .custom-select-trigger.ztype-select[aria-expanded="true"] {
+    border-color: var(--neon-cyan);
+    box-shadow: 0 0 18px rgba(0, 229, 255, 0.16);
+}
+
+#start-menu .custom-select-menu {
+    width: 100%;
+    border-color: rgba(0, 229, 255, 0.25);
+    border-radius: 12px;
+    background: #0a1432;
+    color: var(--text-primary);
+}
+
+#start-menu .custom-select-option[aria-selected="true"],
+#start-menu .custom-select-option:hover {
+    background: rgba(0, 229, 255, 0.16);
+}
+
 .ztype-select option {
     background: #0f172a;
     color: white;

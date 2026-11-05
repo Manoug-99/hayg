@@ -27,6 +27,27 @@
             <div class="header-controls"></div>
         </header>
 
+        <section id="typing-start-overlay" class="typing-start-overlay" role="dialog" aria-modal="true" aria-labelledby="typing-start-title">
+            <div class="typing-start-card">
+                <a href="index.html#typing-game-card" class="back-button typing-overlay-back" aria-label="Վերադառնալ խաղերու ցանկին">←</a>
+                <p class="typing-start-kicker"></p>
+                <h2 id="typing-start-title">Ընտրէ ժամանակը</h2>
+                <p class="typing-start-description"></p>
+                <p class="typing-start-best">Լաւագոյն նիշ <strong id="typing-start-best">0</strong></p>
+                <div class="typing-duration-options" role="group" aria-label="Ընտրէ խաղի տեւողութիւնը">
+                    <button class="typing-duration-option" type="button" data-duration="60" aria-pressed="false">1 վայրկեան</button>
+                    <button class="typing-duration-option is-selected" type="button" data-duration="120" aria-pressed="true">2 վայրկեան</button>
+                    <button class="typing-duration-option" type="button" data-duration="300" aria-pressed="false">5 վայրկեան</button>
+                </div>
+                <select id="typing-timer-select" class="level-select" aria-label="Ընտրէ խաղի տեւողութիւնը" data-custom-dropdown="true" hidden>
+                    <option value="60">1 վայրկեան</option>
+                    <option value="120" selected>2 վայրկեան</option>
+                    <option value="300">5 վայրկեան</option>
+                </select>
+                <button id="start-typing-btn" class="start-btn" type="button">Սկսիր</button>
+            </div>
+        </section>
+
         <div class="stats-bar glass-panel">
             <div class="stat">
                 <span class="stat-label">Ժամանակ</span>
@@ -43,15 +64,6 @@
         </div>
 
         <div class="words-container glass-panel" id="words-container" style="position: relative;">
-            <div id="typing-start-overlay" class="start-overlay" style="z-index: 20;">
-                <h2>Ընտրէ ժամանակը</h2>
-                <select id="typing-timer-select" class="level-select">
-                    <option value="60">1 վայրկեան</option>
-                    <option value="120" selected>2 վայրկեան</option>
-                    <option value="300">5 վայրկեան</option>
-                </select>
-                <button id="start-typing-btn" class="start-btn">Սկսիր</button>
-            </div>
             <div id="words-display"></div>
             <div class="focus-overlay" id="focus-overlay">Սկսիր տպել</div>
         </div>
@@ -99,6 +111,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/api.js"></script>
     <script src="js/index.js"></script>
+    <script src="js/custom-dropdown.js"></script>
     <script src="js/words.js"></script>
     <script src="js/typing-game.js"></script>
     <script src="js/messaging.js"></script>
