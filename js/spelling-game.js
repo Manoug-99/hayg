@@ -136,6 +136,7 @@
         let answerTimeout = null;
         let roundId = 0;
         let audioContext = null;
+        let lastCountdownSecond = null;
         let personalBestPromise = Promise.resolve({ score: 0, userId: null, storageKey: "spelling_best_guest" });
 
         function shuffled(items) {
@@ -242,6 +243,11 @@
             const seconds = Math.max(0, Math.ceil(remaining / 1000));
             timerDisplay.textContent = `${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
             timerDisplay.classList.toggle("is-low", seconds <= 5);
+            timerDisplay.classList.toggle("is-critical", seconds > 0 && seconds <= 5);
+            if (seconds > 0 && seconds <= 5 && seconds !== lastCountdownSecond) {
+                playCountdownSound(seconds);
+            }
+            lastCountdownSecond = seconds;
         }
 
         function renderStats() {
@@ -374,6 +380,23 @@
                 oscillator.start(noteStart);
                 oscillator.stop(noteStart + 0.25);
             });
+        }
+
+        function playCountdownSound(secondsRemaining) {
+            if (!audioContext || audioContext.state !== "running") return;
+
+            const start = audioContext.currentTime;
+            const oscillator = audioContext.createOscillator();
+            const volume = audioContext.createGain();
+            oscillator.type = "triangle";
+            oscillator.frequency.setValueAtTime(520 + (5 - secondsRemaining) * 90, start);
+            volume.gain.setValueAtTime(0.0001, start);
+            volume.gain.linearRampToValueAtTime(0.12, start + 0.01);
+            volume.gain.exponentialRampToValueAtTime(0.0001, start + 0.16);
+            oscillator.connect(volume);
+            volume.connect(audioContext.destination);
+            oscillator.start(start);
+            oscillator.stop(start + 0.17);
         }
 
         async function loadPersonalBest() {
@@ -664,6 +687,7 @@
             saveAttempted = false;
             deck = createDeck();
             renderStats();
+            lastCountdownSecond = null;
             renderTimer(initialTime * 1000);
             personalBestPromise = loadPersonalBest().catch(error => {
                 console.error("Could not load spelling-game personal best:", error);

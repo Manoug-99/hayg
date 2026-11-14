@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <defs>
+    <linearGradient id="emerald" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#A7FFD5"/>
+      <stop offset="40%" stop-color="#20C77A"/>
+      <stop offset="100%" stop-color="#087443"/>
+    </linearGradient>
+    <linearGradient id="shine" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E4FFF1"/>
+      <stop offset="100%" stop-color="#54D99A"/>
+    </linearGradient>
+  </defs>
+  <path d="M34 76 L27 116 L48 106 L64 122 L80 106 L101 116 L94 76"
+        fill="url(#emerald)" stroke="#08643D" stroke-width="3" stroke-linejoin="round"/>
+  <circle cx="64" cy="53" r="39" fill="url(#emerald)" stroke="#08643D" stroke-width="4"/>
+  <circle cx="64" cy="53" r="31" fill="none" stroke="url(#shine)" stroke-width="3"/>
+  <path d="M64 29 L82 47 L64 78 L46 47 Z" fill="#E4FFF1" stroke="#087443" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M46 47 L64 47 L64 78 Z" fill="#8CF0BD"/>
+  <path d="M64 47 L82 47 L64 78 Z" fill="#20B975"/>
+  <path d="M64 29 L46 47 L57 47 Z" fill="#D0FFE6"/>
+  <path d="M64 29 L82 47 L71 47 Z" fill="#6BE5A9"/>
+</svg>

@@ -109,6 +109,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         panel.classList.remove("new-record");
         void panel.offsetWidth;
         panel.classList.add("new-record");
+        playSound("record");
         try {
             localStorage.setItem(bestScoreStorageKey(difficulty), String(score));
         } catch (error) {
@@ -145,7 +146,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     // --- Audio System ---
     let audioCtx;
     function initAudio() {
-        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContextClass) return;
+        if (!audioCtx) audioCtx = new AudioContextClass();
         if (audioCtx.state === 'suspended') {
             audioCtx.resume().catch(error => console.error('Could not resume ZType audio:', error));
         }
@@ -191,6 +194,21 @@ document.addEventListener("DOMContentLoaded", async () => {
             gain.gain.setValueAtTime(0.5, t);
             gain.gain.exponentialRampToValueAtTime(0.01, t + 0.2);
             noise.start(t);
+        } else if (type === 'record') {
+            [660, 880, 1100].forEach((frequency, index) => {
+                const noteStart = t + index * 0.1;
+                const noteOscillator = audioCtx.createOscillator();
+                const noteGain = audioCtx.createGain();
+                noteOscillator.type = 'sine';
+                noteOscillator.frequency.setValueAtTime(frequency, noteStart);
+                noteGain.gain.setValueAtTime(0.0001, noteStart);
+                noteGain.gain.linearRampToValueAtTime(0.12, noteStart + 0.015);
+                noteGain.gain.exponentialRampToValueAtTime(0.0001, noteStart + 0.24);
+                noteOscillator.connect(noteGain);
+                noteGain.connect(audioCtx.destination);
+                noteOscillator.start(noteStart);
+                noteOscillator.stop(noteStart + 0.25);
+            });
         }
     }
 
@@ -736,6 +754,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         finalBestScore.textContent = String(bestScores[currentDifficulty] || 0);
 
         await personalBestPromise;
+        const bestSave = savePersonalBest(currentDifficulty, score);
         if (window.HaygAPI) {
             try {
                 await window.HaygAPI.updateScore('ztype', score);
@@ -743,7 +762,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 console.error("Could not save ZType score:", error);
             }
         }
-        await savePersonalBest(currentDifficulty, score);
+        await bestSave;
     }
 
     // --- Event Listeners ---

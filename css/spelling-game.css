@@ -223,6 +223,12 @@
     animation: spelling-pulse 600ms ease-in-out infinite alternate;
 }
 
+.spelling-timer-wrap strong.is-critical {
+    color: #b91c1c;
+    text-shadow: 0 0 16px rgba(220, 38, 38, 0.62);
+    animation: spelling-critical-pulse 420ms ease-in-out infinite alternate;
+}
+
 .spelling-timer-wrap strong.is-low.is-increased {
     animation: spelling-time-bump 520ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
@@ -637,6 +643,10 @@
     to { transform: scale(1.06); }
 }
 
+@keyframes spelling-critical-pulse {
+    to { transform: scale(1.12); }
+}
+
 @keyframes spelling-heart-drop {
     0% {
         opacity: 1;
@@ -765,6 +775,7 @@
     .spelling-score-wrap strong.is-increased,
     .spelling-timer-wrap strong.is-increased,
     .spelling-timer-wrap strong.is-low.is-increased,
+    .spelling-timer-wrap strong.is-critical,
     .spelling-timer-wrap strong.is-low,
     .spelling-personal-best.is-new-record,
     .spelling-question.answer-correct,

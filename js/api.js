@@ -44,12 +44,18 @@ window.showToast = function (message, type = 'success', duration = null) {
 
     let icon = '✅';
     if (type === 'error') icon = '❌';
-    if (type === 'streak') icon = '🔥';
     if (type === 'warning') icon = '⚠️';
 
-    const iconNode = document.createElement('span');
-    iconNode.textContent = icon;
-    iconNode.style.marginRight = '8px';
+    const iconNode = document.createElement(type === 'streak' ? 'img' : 'span');
+    if (type === 'streak') {
+        iconNode.src = 'pics/fire-static.svg';
+        iconNode.alt = '';
+        iconNode.setAttribute('aria-hidden', 'true');
+        iconNode.className = 'toast-streak-icon';
+    } else {
+        iconNode.textContent = icon;
+        iconNode.style.marginRight = '8px';
+    }
 
     const textNode = document.createElement('span');
     textNode.textContent = String(message ?? '');
@@ -114,7 +120,7 @@ window.HaygAPI = {
                     window.showToast(`+${score} XP Վաստակած էք!`, 'success');
                 }
                 if (window.updateDashboardUI) {
-                    window.updateDashboardUI(newTotalScore, newStreak);
+                    window.updateDashboardUI(true);
                 }
 
                 const streakIncreased = Boolean(award.streak_increased);
@@ -123,7 +129,7 @@ window.HaygAPI = {
                         if (window.showStreakAnimation) {
                             window.showStreakAnimation(newStreak);
                         } else if (window.showToast) {
-                            window.showToast(`🔥 ${newStreak} Օրուայ Շարք!`, 'streak');
+                            window.showToast(`${newStreak} Օրուայ Շարք!`, 'streak');
                         }
                     }, 800);
                 }
@@ -137,8 +143,7 @@ window.HaygAPI = {
                             if (window.showRankUpAnimation) {
                                 window.showRankUpAnimation(
                                     newRankDetails.current.name,
-                                    newRankDetails.current.emoji,
-                                    newRankDetails.current.color
+                                    newRankDetails.current.badge
                                 );
                             }
                         }, rankDelay);
@@ -214,7 +219,7 @@ window.HaygAPI = {
                 return false;
             } else {
                 if (window.updateDashboardUI) {
-                    window.updateDashboardUI(newTotalScore, newStreak);
+                    window.updateDashboardUI(true);
                 }
 
                 // Show fire animation overlay if this is the first play of the day
@@ -223,7 +228,7 @@ window.HaygAPI = {
                         if (window.showStreakAnimation) {
                             window.showStreakAnimation(newStreak);
                         } else if (window.showToast) {
-                            window.showToast(`🔥 ${newStreak} Օրուայ Շարք!`, 'streak');
+                            window.showToast(`${newStreak} Օրուայ Շարք!`, 'streak');
                         }
                     }, 800);
                 }
@@ -240,8 +245,7 @@ window.HaygAPI = {
                             if (window.showRankUpAnimation) {
                                 window.showRankUpAnimation(
                                     newRankDetails.current.name,
-                                    newRankDetails.current.emoji,
-                                    newRankDetails.current.color
+                                    newRankDetails.current.badge
                                 );
                             }
                         }, rankDelay);
@@ -493,25 +497,25 @@ window.HaygAPI = {
 
 window.getRankDetails = function (xp) {
     const ranks = [
-        { name: 'Պղինձ Գ', xp: 0, color: '#cd7f32', emoji: '🟤' },
-        { name: 'Պղինձ Բ', xp: 500, color: '#cd7f32', emoji: '🟤' },
-        { name: 'Պղինձ Ա', xp: 1000, color: '#cd7f32', emoji: '🟤' },
-        { name: 'Արծաթ Գ', xp: 2000, color: '#c0c0c0', emoji: '⚪' },
-        { name: 'Արծաթ Բ', xp: 3500, color: '#c0c0c0', emoji: '⚪' },
-        { name: 'Արծաթ Ա', xp: 5000, color: '#c0c0c0', emoji: '⚪' },
-        { name: 'Ոսկի Գ', xp: 7500, color: '#ffd700', emoji: '🟡' },
-        { name: 'Ոսկի Բ', xp: 10500, color: '#ffd700', emoji: '🟡' },
-        { name: 'Ոսկի Ա', xp: 14000, color: '#ffd700', emoji: '🟡' },
-        { name: 'Ադամանդ Գ', xp: 18500, color: '#00f2ff', emoji: '💎' },
-        { name: 'Ադամանդ Բ', xp: 24000, color: '#00f2ff', emoji: '💎' },
-        { name: 'Ադամանդ Ա', xp: 30000, color: '#00f2ff', emoji: '💎' },
-        { name: 'Զմրուխտ Գ', xp: 40000, color: '#50c878', emoji: '🟢' },
-        { name: 'Զմրուխտ Բ', xp: 45000, color: '#50c878', emoji: '🟢' },
-        { name: 'Զմրուխտ Ա', xp: 50000, color: '#50c878', emoji: '🟢' },
-        { name: 'Իշխան Գ', xp: 60000, color: '#ff00ff', emoji: '👑' },
-        { name: 'Իշխան Բ', xp: 70000, color: '#ff00ff', emoji: '👑' },
-        { name: 'Իշխան Ա', xp: 80000, color: '#ff00ff', emoji: '👑' },
-        { name: 'Վարպետ', xp: 100000, color: '#ffa200', emoji: '🌟' },
+        { name: 'Պղինձ Գ', xp: 0, color: '#cd7f32', badge: 'pics/rank-bronze.svg' },
+        { name: 'Պղինձ Բ', xp: 500, color: '#cd7f32', badge: 'pics/rank-bronze.svg' },
+        { name: 'Պղինձ Ա', xp: 1000, color: '#cd7f32', badge: 'pics/rank-bronze.svg' },
+        { name: 'Արծաթ Գ', xp: 2000, color: '#c0c0c0', badge: 'pics/rank-silver.svg' },
+        { name: 'Արծաթ Բ', xp: 3500, color: '#c0c0c0', badge: 'pics/rank-silver.svg' },
+        { name: 'Արծաթ Ա', xp: 5000, color: '#c0c0c0', badge: 'pics/rank-silver.svg' },
+        { name: 'Ոսկի Գ', xp: 7500, color: '#ffd700', badge: 'pics/rank-gold.svg' },
+        { name: 'Ոսկի Բ', xp: 10500, color: '#ffd700', badge: 'pics/rank-gold.svg' },
+        { name: 'Ոսկի Ա', xp: 14000, color: '#ffd700', badge: 'pics/rank-gold.svg' },
+        { name: 'Ադամանդ Գ', xp: 18500, color: '#00f2ff', badge: 'pics/rank-diamond.svg' },
+        { name: 'Ադամանդ Բ', xp: 24000, color: '#00f2ff', badge: 'pics/rank-diamond.svg' },
+        { name: 'Ադամանդ Ա', xp: 30000, color: '#00f2ff', badge: 'pics/rank-diamond.svg' },
+        { name: 'Զմրուխտ Գ', xp: 40000, color: '#50c878', badge: 'pics/rank-emerald.svg' },
+        { name: 'Զմրուխտ Բ', xp: 45000, color: '#50c878', badge: 'pics/rank-emerald.svg' },
+        { name: 'Զմրուխտ Ա', xp: 50000, color: '#50c878', badge: 'pics/rank-emerald.svg' },
+        { name: 'Իշխան Գ', xp: 60000, color: '#ff00ff', badge: 'pics/rank-pro.svg' },
+        { name: 'Իշխան Բ', xp: 70000, color: '#ff00ff', badge: 'pics/rank-pro.svg' },
+        { name: 'Իշխան Ա', xp: 80000, color: '#ff00ff', badge: 'pics/rank-pro.svg' },
+        { name: 'Վարպետ', xp: 100000, color: '#922844', badge: 'pics/rank-master.svg' },
     ];
 
     let currentRank = ranks[0];
@@ -801,7 +805,7 @@ function playStreakSound() {
 window.playRankUpSound = playRankUpSound;
 window.playStreakSound = playStreakSound;
 
-window.showRankUpAnimation = function (rankName, emoji, color) {
+window.showRankUpAnimation = function (rankName, badge) {
     // Dismiss keyboard on mobile to show full screen
     const nativeInput = document.getElementById('native-keyboard-input');
     if (nativeInput) nativeInput.blur();
@@ -828,8 +832,8 @@ window.showRankUpAnimation = function (rankName, emoji, color) {
             <canvas id="confetti-canvas" class="confetti-canvas"></canvas>
             <div class="rank-up-content">
                 <div class="rank-up-label">ՆՈՐ ՄԱԿԱՐԴԱԿ</div>
-                <div class="rank-up-emoji">${emoji}</div>
-                <div class="rank-up-name">${rankName}</div>
+                <img class="rank-up-badge" alt="" aria-hidden="true">
+                <div class="rank-up-name"></div>
                 <div class="rank-up-msg">Շնորհաւոր! Դուք բարձրացաք նոր մակարդակ:</div>
                 <button type="button" class="rank-up-btn" id="rank-up-continue-btn">Շարունակել</button>
             </div>
@@ -841,14 +845,14 @@ window.showRankUpAnimation = function (rankName, emoji, color) {
             continueBtn.addEventListener('click', dismissOverlay);
         }
     } else {
-        overlay.querySelector('.rank-up-emoji').textContent = emoji;
         overlay.querySelector('.rank-up-name').textContent = rankName;
     }
 
     // Trigger reflow to ensure CSS transitions happen properly
     void overlay.offsetWidth;
 
-    overlay.querySelector('.rank-up-emoji').style.color = color;
+    overlay.querySelector('.rank-up-badge').src = badge;
+    overlay.querySelector('.rank-up-name').textContent = rankName;
     overlay.classList.add('show');
 
     // Simple confetti
@@ -930,7 +934,7 @@ window.showStreakAnimation = function (streakCount = 1) {
                 <div class="streak-label">ՕՐԱԿԱՆ ՇԱՐՔ</div>
                 <div class="streak-fire-container">
                     <div class="streak-fire-glow"></div>
-                    <div class="streak-flame-icon">🔥</div>
+                    <img class="streak-flame-icon" src="pics/fire.svg" alt="" aria-hidden="true">
                 </div>
                 <div class="streak-count-display">
                     <span class="streak-count-number">${streakCount}</span>
@@ -970,7 +974,7 @@ window.startStreakSparks = function () {
     let sparks = [];
     const sparkColors = ['#ff4500', '#ff7700', '#ffaa00', '#fbbf24', '#ef4444', '#f97316'];
 
-    for (let i = 0; i < 75; i++) {
+    for (let i = 0; i < 48; i++) {
         sparks.push({
             x: Math.random() * canvas.width,
             y: canvas.height + Math.random() * 200,
@@ -1047,13 +1051,13 @@ window.showGuestOverlay = function () {
                 <div class="guest-label">ՀԻՒՐԻ ԿԱՐԳԱՎԻՃԱԿ</div>
                 <div class="guest-icon-container">
                     <div class="guest-icon-glow"></div>
-                    <div class="guest-icon">👤</div>
+                    <img class="guest-icon" src="pics/profile-0.svg" alt="" width="120" height="120">
                 </div>
                 <div class="guest-title">Կը խաղաք որպէս հիւր</div>
-                <div class="guest-msg">Ձեր նիշերը պիտի չպահուին: Ստեղծեցէ՛ք հաշիւ՝ ձեր յառաջդիմութիւնը պահպանելու համար:</div>
+                <div class="guest-msg">Ձեր նիշերը պիտի չպահուին: Գրանցուէցէ՛ք ձեր նիշերը պահպանելու համար:</div>
                 <div class="guest-actions">
                     <button type="button" class="guest-signup-btn" id="guest-signup-btn">
-                        <span>Ստեղծել Հաշիւ</span>
+                        <span>Գրանցուիլ</span>
                     </button>
                     <button type="button" class="guest-continue-btn" id="guest-continue-btn">
                         <span>Շարունակել որպէս Հիւր</span>

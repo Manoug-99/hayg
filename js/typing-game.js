@@ -168,8 +168,50 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     function initAudio() {
         if (!audioContext) {
-            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+            if (!AudioContextClass) return;
+            audioContext = new AudioContextClass();
         }
+        if (audioContext.state === "suspended") {
+            audioContext.resume().catch(error => console.warn("Could not enable typing-game sounds:", error));
+        }
+    }
+
+    function playCountdownSound(secondsRemaining) {
+        if (!audioContext || audioContext.state !== "running") return;
+
+        const start = audioContext.currentTime;
+        const oscillator = audioContext.createOscillator();
+        const volume = audioContext.createGain();
+        oscillator.type = "sine";
+        oscillator.frequency.setValueAtTime(440 + (10 - secondsRemaining) * 35, start);
+        volume.gain.setValueAtTime(0.0001, start);
+        volume.gain.linearRampToValueAtTime(0.1, start + 0.01);
+        volume.gain.exponentialRampToValueAtTime(0.0001, start + 0.12);
+        oscillator.connect(volume);
+        volume.connect(audioContext.destination);
+        oscillator.start(start);
+        oscillator.stop(start + 0.13);
+    }
+
+    function playRecordSound() {
+        if (!audioContext || audioContext.state !== "running") return;
+
+        const start = audioContext.currentTime;
+        [660, 880, 1100].forEach((frequency, index) => {
+            const noteStart = start + index * 0.1;
+            const oscillator = audioContext.createOscillator();
+            const volume = audioContext.createGain();
+            oscillator.type = "sine";
+            oscillator.frequency.setValueAtTime(frequency, noteStart);
+            volume.gain.setValueAtTime(0.0001, noteStart);
+            volume.gain.linearRampToValueAtTime(0.12, noteStart + 0.015);
+            volume.gain.exponentialRampToValueAtTime(0.0001, noteStart + 0.24);
+            oscillator.connect(volume);
+            volume.connect(audioContext.destination);
+            oscillator.start(noteStart);
+            oscillator.stop(noteStart + 0.25);
+        });
     }
 
     function initKeyboard() {
@@ -314,6 +356,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         timerInterval = setInterval(() => {
             timer--;
             timeDisplay.textContent = timer;
+            timeDisplay.classList.toggle("is-countdown", timer <= 5 && timer > 0);
+            if (timer <= 5 && timer > 0) playCountdownSound(timer);
 
             // Real-time WPM update
             calculateStats();
@@ -330,6 +374,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         window.setGameKeyboardActive?.(false);
         clearInterval(timerInterval);
         calculateStats();
+        timeDisplay.classList.remove("is-countdown");
 
         const finalWpm = wpmDisplay.textContent;
         const finalAcc = accuracyDisplay.textContent;
@@ -353,23 +398,32 @@ document.addEventListener("DOMContentLoaded", async () => {
         isGameStarted = false;
 
         await personalBestPromise;
-        if (window.HaygAPI) {
+        const isNewBestScore = scoreEarned > (bestScores[completedDuration] || 0);
+        const finalSpeed = Number(finalWpm) || 0;
+        const isNewBestSpeed = finalSpeed > bestSpeed;
+        if (isNewBestScore || isNewBestSpeed) {
+            resultCard.classList.remove("new-record");
+            void resultCard.offsetWidth;
+            resultCard.classList.add("new-record");
+            playRecordSound();
+            recordNote.textContent = isNewBestScore && isNewBestSpeed
+                ? "Նոր անձնական նիշ եւ արագութիւն։"
+                : isNewBestSpeed ? "Նոր լաւագոյն արագութիւն։" : "Նոր անձնական լաւագոյն նիշ։";
+        }
+
+        const saveScore = async () => {
+            if (!window.HaygAPI) return;
             try {
                 await window.HaygAPI.updateScore('typing', scoreEarned);
             } catch (error) {
                 console.error("Could not save typing-game score:", error);
             }
-        }
-        const isNewBestScore = await savePersonalBest(completedDuration, scoreEarned);
-        const isNewBestSpeed = await saveBestSpeed(Number(finalWpm) || 0);
-        if (isNewBestScore || isNewBestSpeed) {
-            resultCard.classList.remove("new-record");
-            void resultCard.offsetWidth;
-            resultCard.classList.add("new-record");
-            recordNote.textContent = isNewBestScore && isNewBestSpeed
-                ? "Նոր անձնական նիշ եւ արագութիւն։"
-                : isNewBestSpeed ? "Նոր լաւագոյն արագութիւն։" : "Նոր անձնական լաւագոյն նիշ։";
-        }
+        };
+        await Promise.all([
+            saveScore(),
+            savePersonalBest(completedDuration, scoreEarned),
+            saveBestSpeed(finalSpeed)
+        ]);
     }
 
     function calculateStats() {
@@ -405,6 +459,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         correctKeystrokes = 0;
 
         timeDisplay.textContent = timer;
+        timeDisplay.classList.remove("is-countdown");
         wpmDisplay.textContent = "0";
         accuracyDisplay.textContent = "100%";
         wordsDisplay.style.transform = "translateY(0)";
@@ -484,6 +539,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     function playClickSound() {
         if (!audioContext) initAudio();
+        if (!audioContext) return;
 
         // Typewriter mechanical click (white noise burst through a bandpass filter)
         const bufferSize = audioContext.sampleRate * 0.04; // 40ms buffer

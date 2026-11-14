@@ -27,11 +27,76 @@ let pendingEmail = ''; // Store email for verification step
 let currentLeaderboardGame = 'total';
 let currentLeaderboardLimit = 5;
 let currentLeaderboardScoreType = 'overall';
+let dashboardLazyImagesReady = false;
 
 // Helper to truncate long names
 function truncateName(name, length = 12) {
     if (!name) return 'Անանուն';
     return name.length > length ? name.substring(0, length) + '...' : name;
+}
+
+const heroFunFacts = [
+'Հայոց այբուբենը ստեղծած է Մեսրոպ Մաշտոցը՝ 405 թուականին, եւ իւրայատուկ գրային համակարգ մըն է։',
+
+  'Հայոց այբուբենը սկզբնական շրջանին ունէր 36 տառ։ Յետագային աւելցան Օ եւ Ֆ տառերը։',
+
+  'Հայերէնը հնդեւրոպական լեզուաընտանիքին անկախ ճիւղերէն մէկն է, ինչպէս յունարէնն ու ալպաներէնը։',
+
+  'Հայերէնը ունի երկու գլխաւոր գրական ճիւղեր՝ արեւմտահայերէն եւ արեւելահայերէն։',
+
+  'Հայերէնը ունի իրեն յատուկ կէտադրական նշաններ, ինչպէս՝ պարոյկը (՞), երկարը (՜) եւ շեշտը (՛)։',
+
+  'Հայոց այբուբենի տառերը գործածուած են նաեւ թիւեր նշանակելու համար։ Օրինակ՝ Ա՝ 1, Բ՝ 2, Գ՝ 3 ...',
+
+  'Հայերէնը պահպանած է հին բառեր, որոնց արմատները կը հասնին մինչեւ նախահնդեւրոպական լեզուին՝ բազմաթիւ լեզուներու ընդհանուր նախահօր։',
+
+  'Արեւմտահայերէնը ԻՒՆԷՍՔՕ-ի կողմէ դասուած է խիստ վտանգուած լեզուներու շարքին։',
+
+  'Հայերէնը աշխարհի այն քիչ լեզուներէն է, որ ունի իր սեփական այբուբէնը։',
+
+  'Հայերէն առաջին տպագիր գիրքը՝ «Ուրբաթագիրք»-ը, հրատարակուած է 1512 թուականին՝ Վենետիկի մէջ։',
+
+  'Մեսրոպ Մաշտոց եւ Սահակ Պարթեւ մեծ դեր ունեցած են Աստուածաշունչի հայերէն թարգմանութեան գործին մէջ։',
+
+  'Հին յունարէն, ասորերէն եւ այլ լեզուներով գրուած կարգ մը հին երկեր պահպանուած են նաեւ իրենց հայկական թարգմանութիւններուն շնորհիւ։',
+
+  'Ըստ հայկական աւանդութեան՝ Հայկը հայ ժողովուրդին նախահայրն է եւ Հայկազուններու տոհմին հիմնադիրը։'
+];
+
+function getRandomHeroFunFact() {
+    return heroFunFacts[Math.floor(Math.random() * heroFunFacts.length)];
+}
+
+function fitHeroPlayerName() {
+    const heroName = heroTitle?.querySelector('.hero-player-name');
+    if (!heroName) return;
+
+    heroName.style.fontSize = '';
+    let fontSize = parseFloat(getComputedStyle(heroName).fontSize);
+    const minFontSize = 24;
+
+    while (heroName.scrollWidth > heroName.clientWidth + 1 && fontSize > minFontSize) {
+        fontSize = Math.max(minFontSize, fontSize - 1);
+        heroName.style.fontSize = `${fontSize}px`;
+    }
+}
+
+function setHeroPlayerName(name) {
+    if (!heroTitle) return;
+
+    heroTitle.textContent = '';
+    heroTitle.appendChild(document.createTextNode('Բարի եկաք,'));
+    heroTitle.appendChild(document.createElement('br'));
+    const heroName = document.createElement('span');
+    heroName.className = 'hero-player-name';
+    heroName.textContent = name;
+    heroTitle.appendChild(heroName);
+    fitHeroPlayerName();
+}
+
+window.addEventListener('resize', fitHeroPlayerName);
+if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(fitHeroPlayerName);
 }
 
 // Calculate effective streak based on last active date using strict UTC to match DB
@@ -47,6 +112,25 @@ function getEffectiveStreak(streakCount, lastActiveDate) {
     // If last active was more than 1 day ago (e.g. 2 days ago), streak is broken
     if (diffFromActive > 1) return 0;
     return streakCount || 0;
+}
+
+function hasPlayedUtcToday(lastActiveDate) {
+    if (!lastActiveDate) return false;
+
+    const today = new Date().toISOString().slice(0, 10);
+    let activeDate;
+    if (typeof lastActiveDate === 'string') {
+        activeDate = lastActiveDate.slice(0, 10);
+    } else {
+        const parsedDate = new Date(lastActiveDate);
+        if (Number.isNaN(parsedDate.getTime())) return false;
+        activeDate = parsedDate.toISOString().slice(0, 10);
+    }
+
+    const parsedActiveDate = new Date(`${activeDate}T00:00:00.000Z`);
+    if (Number.isNaN(parsedActiveDate.getTime())) return false;
+
+    return parsedActiveDate.toISOString().slice(0, 10) === today;
 }
 
 const armenianRegex = /^[ \u0530-\u058F]+$/;
@@ -218,10 +302,23 @@ async function signInWithGoogle() {
 
 // --- DATABASE & SCORING API ---
 
-window.updateDashboardUI = function (score, streak) {
-    const statsDisplay = document.getElementById('user-stats-display');
-    if (statsDisplay) {
-        statsDisplay.innerHTML = `⭐ XP: ${score} &nbsp; 🔥 Շարք: ${streak}`;
+window.updateDashboardUI = function (hasPlayedToday = true) {
+    const fireIcon = document.querySelector('.fire-icon-large');
+    if (fireIcon) {
+        const source = hasPlayedToday ? 'pics/fire.svg' : 'pics/fire-static.svg';
+        fireIcon.classList.toggle('is-inactive', !hasPlayedToday);
+        if (fireIcon.dataset.src !== source && fireIcon.getAttribute('src') !== source) {
+            fireIcon.removeAttribute('src');
+            fireIcon.dataset.src = source;
+            if (dashboardLazyImagesReady) {
+                initLazyImages(document.getElementById('personal-dashboard'));
+            }
+        }
+    }
+
+    const streakCounter = document.querySelector('.streak-number-playful');
+    if (streakCounter) {
+        streakCounter.classList.toggle('played-today', hasPlayedToday);
     }
 };
 
@@ -243,32 +340,22 @@ async function signOut() {
 function updateUIForUser(user) {
     currentUser = user;
     const fullName = user.user_metadata?.full_name || 'Օգտատէր';
-    const truncatedName = truncateName(fullName, 15); // Hero can be slightly longer
+    const truncatedName = truncateName(fullName, 15);
 
     if (welcomeText) {
         welcomeText.textContent = `Բարի եկաք, ${truncatedName}`;
         welcomeText.style.display = 'inline-block';
     }
 
-    if (heroTitle) {
-        heroTitle.textContent = '';
-        heroTitle.appendChild(document.createTextNode('Բարի եկաք,'));
-        heroTitle.appendChild(document.createElement('br'));
-        const heroName = document.createElement('span');
-        heroName.textContent = truncatedName;
-        heroTitle.appendChild(heroName);
-    }
+    setHeroPlayerName(fullName);
     if (heroSubtitle) {
-        heroSubtitle.textContent = '';
-        heroSubtitle.appendChild(document.createTextNode('Պատրա՞ստ ես յաջորդ մարտահրաւէրին:'));
-        heroSubtitle.appendChild(document.createElement('br'));
-        heroSubtitle.appendChild(document.createElement('br'));
-        const statsDisplay = document.createElement('span');
-        statsDisplay.id = 'user-stats-display';
-        statsDisplay.style.fontWeight = '800';
-        statsDisplay.style.color = 'var(--accent)';
-        statsDisplay.style.fontSize = '1.5rem';
-        heroSubtitle.appendChild(statsDisplay);
+        const factHeading = document.createElement('strong');
+        factHeading.className = 'hero-fact-heading';
+        factHeading.textContent = 'Գիտէի՞ք թէ';
+        const factText = document.createElement('span');
+        factText.className = 'hero-fact-text';
+        factText.textContent = getRandomHeroFunFact();
+        heroSubtitle.replaceChildren(factHeading, document.createElement('br'), factText);
     }
 
     // Fetch user profile stats
@@ -282,20 +369,17 @@ function updateUIForUser(user) {
                         document.getElementById('name-prompt-modal').classList.add('show');
                     } else {
                         // Refresh UI with Armenian name from profile
-                        const profileName = truncateName(data.full_name, 15);
-                        if (heroTitle) {
-                            heroTitle.textContent = '';
-                            heroTitle.appendChild(document.createTextNode('Բարի եկաք,'));
-                            heroTitle.appendChild(document.createElement('br'));
-                            const heroName = document.createElement('span');
-                            heroName.textContent = profileName;
-                            heroTitle.appendChild(heroName);
+                        setHeroPlayerName(data.full_name);
+                        if (welcomeText) {
+                            welcomeText.textContent = `Բարի եկաք, ${truncateName(data.full_name, 15)}`;
                         }
-                        if (welcomeText) welcomeText.textContent = `Բարի եկաք, ${profileName}`;
                     }
 
                     const effStreak = getEffectiveStreak(data.streak_count, data.last_active_date);
-                    if (window.updateDashboardUI) window.updateDashboardUI(data.total_score || 0, effStreak);
+                    if (window.updateDashboardUI) {
+                        const hasPlayedToday = hasPlayedUtcToday(data.last_active_date);
+                        window.updateDashboardUI(hasPlayedToday);
+                    }
                     renderPersonalDashboard(data);
                 }
                 // If no profile found (e.g. first Google login without a trigger)
@@ -310,8 +394,8 @@ function updateUIForUser(user) {
     if (authText) authText.textContent = 'Ելք';
     else authBtn.textContent = 'Ելք';
 
-    const authIcon = authBtn.querySelector('.auth-icon');
-    if (authIcon) authIcon.textContent = '🚪';
+    setAuthButtonIcon('pics/door.png');
+    authBtn.setAttribute('aria-label', 'Ելք');
 
     authBtn.onclick = (e) => {
         e.preventDefault();
@@ -346,7 +430,9 @@ function updateUIForGuest() {
 
     if (navLink) {
         navLink.href = '#about';
-        navLink.querySelector('.nav-icon').textContent = 'ℹ️';
+        navLink.title = 'Ինչո՞ւ Խաղալ';
+        const navIcon = navLink.querySelector('.nav-icon img');
+        if (navIcon) navIcon.src = 'pics/info.png';
         navLink.querySelector('.nav-text').textContent = 'Ինչո՞ւ Խաղալ';
     }
 
@@ -354,14 +440,28 @@ function updateUIForGuest() {
     if (authText) authText.textContent = 'Մուտք';
     else authBtn.textContent = 'Մուտք';
 
-    const authIcon = authBtn.querySelector('.auth-icon');
-    if (authIcon) authIcon.textContent = '👤';
+    setAuthButtonIcon('pics/profile-0-static.svg');
+    authBtn.setAttribute('aria-label', 'Մուտք');
 
     authBtn.onclick = (e) => {
         e.preventDefault();
         openAuthModal('login');
     };
     if (heroSignupBtn) heroSignupBtn.style.display = 'inline-block';
+}
+
+function setAuthButtonIcon(source) {
+    const authIcon = authBtn.querySelector('.auth-icon');
+    if (!authIcon) return;
+
+    let image = authIcon.querySelector('img');
+    if (!image) {
+        image = document.createElement('img');
+        image.alt = '';
+        authIcon.replaceChildren(image);
+    }
+    image.classList.toggle('auth-icon-logout', source === 'pics/door.png');
+    image.src = source;
 }
 
 // Rank functions moved to api.js
@@ -376,7 +476,9 @@ function renderPersonalDashboard(data) {
 
     if (navLink) {
         navLink.href = '#personal-dashboard';
-        navLink.querySelector('.nav-icon').textContent = '📊';
+        navLink.title = 'Արդիւնքներդ';
+        const navIcon = navLink.querySelector('.nav-icon img');
+        if (navIcon) navIcon.src = 'pics/military-medal.png';
         navLink.querySelector('.nav-text').textContent = 'Արդիւնքներդ';
     }
 
@@ -389,8 +491,7 @@ function renderPersonalDashboard(data) {
 
     const rankInfo = window.getRankDetails(currentXp);
 
-    document.getElementById('dash-rank-icon').textContent = rankInfo.current.emoji;
-    document.getElementById('dash-rank-icon').style.boxShadow = `inset 0 0 20px ${rankInfo.current.color}40`;
+    document.getElementById('dash-rank-icon').src = rankInfo.current.badge;
     document.getElementById('dash-rank-name').textContent = rankInfo.current.name;
     document.getElementById('dash-rank-name').style.color = rankInfo.current.color;
 
@@ -398,10 +499,14 @@ function renderPersonalDashboard(data) {
     document.querySelector('.milestone-fill').style.backgroundImage = `linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent), linear-gradient(90deg, ${rankInfo.current.color}, ${rankInfo.next.color})`;
     document.querySelector('.milestone-fill').style.backgroundSize = '20px 20px, 100% 100%';
 
-    const milestoneText = rankInfo.current.name === rankInfo.next.name
-        ? `Առաւելագոյն Մակարդակ!`
-        : `Յաջորդը՝ ${rankInfo.next.emoji} ${rankInfo.next.name} (${rankInfo.next.xp} XP)`;
+    const hasNextRank = rankInfo.current.name !== rankInfo.next.name;
+    const milestoneText = hasNextRank
+        ? `Յաջորդը՝ ${rankInfo.next.name} (${rankInfo.next.xp} XP)`
+        : 'Առաւելագոյն Մակարդակ!';
     document.getElementById('dash-next-text').textContent = milestoneText;
+    const nextRankBadge = document.getElementById('dash-next-badge');
+    nextRankBadge.src = rankInfo.next.badge;
+    nextRankBadge.hidden = !hasNextRank;
 
     // Calendar logic
     const calContainer = document.getElementById('dash-calendar');
@@ -654,6 +759,38 @@ if (mobileMenuBtn && navLinks) {
     });
 }
 
+function syncMobileNavClearance() {
+    if (!navLinks) return;
+
+    const footer = document.querySelector('footer');
+    if (window.matchMedia('(max-width: 900px)').matches) {
+        const navHeight = navLinks.getBoundingClientRect().height;
+        const bottomOffset = parseFloat(getComputedStyle(navLinks).bottom) || 0;
+        const clearance = `${navHeight + bottomOffset}px`;
+        if (footer) {
+            footer.style.setProperty('--mobile-nav-clearance', clearance);
+            document.body.style.paddingBottom = '0px';
+        } else {
+            document.body.style.paddingBottom = clearance;
+        }
+    } else {
+        document.body.style.paddingBottom = '';
+        footer?.style.removeProperty('--mobile-nav-clearance');
+    }
+}
+
+syncMobileNavClearance();
+window.addEventListener('resize', syncMobileNavClearance);
+
+if (window.ResizeObserver && navLinks) {
+    const mobileNavResizeObserver = new ResizeObserver(syncMobileNavClearance);
+    mobileNavResizeObserver.observe(navLinks);
+}
+
+if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(syncMobileNavClearance);
+}
+
 // --- SCROLL REVEAL INIT ---
 document.querySelectorAll('.app-card, .benefit-card').forEach(el => {
     el.style.opacity = '0';
@@ -733,15 +870,15 @@ if (darkModeToggle) {
     // If explicitly set to false, use light mode. Otherwise default to dark.
     if (savedTheme === 'false') {
         document.body.classList.remove('dark-mode');
-        darkModeToggle.textContent = '🌙';
+        darkModeToggle.querySelector('img').src = 'pics/night.png';
     } else {
         document.body.classList.add('dark-mode');
-        darkModeToggle.textContent = '☀️';
+        darkModeToggle.querySelector('img').src = 'pics/sun.png';
     }
 
     darkModeToggle.addEventListener('click', () => {
         const isDarkNow = document.body.classList.toggle('dark-mode');
-        darkModeToggle.textContent = isDarkNow ? '☀️' : '🌙';
+        darkModeToggle.querySelector('img').src = isDarkNow ? 'pics/sun.png' : 'pics/night.png';
         localStorage.setItem('darkMode', isDarkNow);
     });
 }
@@ -894,7 +1031,7 @@ async function loadLeaderboard(game = 'total', limit = 5, scoreType = currentLea
         const valueHeader = document.getElementById('leaderboard-value-header');
         if (valueHeader) {
             if (game === 'streak') {
-                valueHeader.textContent = '🔥';
+                valueHeader.innerHTML = '<img class="fire-inline-icon" src="pics/fire-static.svg" alt="" aria-hidden="true">';
             } else if (currentLeaderboardScoreType !== 'overall') {
                 valueHeader.textContent = game === 'hangman'
                     ? 'Շարք'
@@ -917,9 +1054,9 @@ async function loadLeaderboard(game = 'total', limit = 5, scoreType = currentLea
             let rankDisplay = rank;
             let rankClass = '';
 
-            if (rank === 1) { rankDisplay = '🥇'; rankClass = 'rank-gold'; }
-            else if (rank === 2) { rankDisplay = '🥈'; rankClass = 'rank-silver'; }
-            else if (rank === 3) { rankDisplay = '🥉'; rankClass = 'rank-bronze'; }
+            if (rank === 1) { rankDisplay = '<span class="leaderboard-rank-number">1</span>'; rankClass = 'rank-gold'; }
+            else if (rank === 2) { rankDisplay = '<span class="leaderboard-rank-number">2</span>'; rankClass = 'rank-silver'; }
+            else if (rank === 3) { rankDisplay = '<span class="leaderboard-rank-number">3</span>'; rankClass = 'rank-bronze'; }
             else if (currentUser && player.id === currentUser.id) { rankClass = 'rank-current-user'; }
 
             const displayName = player.full_name || 'Անանուն';
@@ -931,7 +1068,7 @@ async function loadLeaderboard(game = 'total', limit = 5, scoreType = currentLea
                 const streakIntensity = Math.min(streak * 10, 100);
                 let streakStyle = `style="color: hsl(0, ${streakIntensity}%, 60%); font-weight: 700; text-align: center;"`;
                 if (streak >= 7) streakStyle = `style="color: hsl(0, 100%, 50%); font-weight: 800; text-shadow: 0 0 8px rgba(239, 68, 68, 0.4); text-align: center;"`;
-                valueCell = `<td class="streak-cell" ${streakStyle}>🔥 ${streak}</td>`;
+                valueCell = `<td class="streak-cell" ${streakStyle}><img class="fire-inline-icon" src="pics/fire-static.svg" alt="" aria-hidden="true"> ${streak}</td>`;
             } else {
                 const isTypingSpeed = game === 'typing' && currentLeaderboardScoreType === 'typing_speed';
                 const scoreIntensity = Math.min((score / (isTypingSpeed ? 300 : 5000)) * 100, 100);
@@ -957,7 +1094,7 @@ async function loadLeaderboard(game = 'total', limit = 5, scoreType = currentLea
         const collapseBtn = document.getElementById('collapse-leaderboard');
 
         if (showAllBtn) {
-            showAllBtn.textContent = 'Տեսնել աւելին';
+            showAllBtn.innerHTML = '<span class="back-icon leaderboard-more-icon" aria-hidden="true"></span>';
             showAllBtn.style.display = (data.length >= limit) ? 'block' : 'none';
         }
         if (collapseBtn) {
@@ -971,12 +1108,64 @@ async function loadLeaderboard(game = 'total', limit = 5, scoreType = currentLea
 }
 
 // --- LEADERBOARD FILTERS ---
-document.querySelectorAll('.filter-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        loadLeaderboard(btn.dataset.game, 5, 'overall');
+function setActiveLeaderboardFilter(game) {
+    const options = Array.from(document.querySelectorAll('.leaderboard-game-option'));
+    const selectedOption = options.find(option => option.dataset.game === game);
+    if (!selectedOption) return false;
+
+    options.forEach(option => {
+        const isActive = option === selectedOption;
+        option.classList.toggle('active', isActive);
+        option.setAttribute('aria-pressed', String(isActive));
     });
+
+    const label = document.querySelector('.leaderboard-game-label');
+    const toggle = document.getElementById('leaderboard-game-toggle');
+    const selectedLabel = selectedOption.textContent.trim();
+    if (label) label.textContent = selectedLabel;
+    if (toggle) toggle.setAttribute('aria-label', `Խաղի զտիչ՝ ${selectedLabel}`);
+    return true;
+}
+
+function setLeaderboardGameMenuOpen(isOpen) {
+    const toggle = document.getElementById('leaderboard-game-toggle');
+    const menu = document.getElementById('leaderboard-game-menu');
+    if (!toggle || !menu) return;
+
+    toggle.setAttribute('aria-expanded', String(isOpen));
+    menu.hidden = !isOpen;
+    if (!isOpen) {
+        menu.classList.remove('opens-up');
+        menu.style.maxHeight = '';
+        return;
+    }
+
+    const toggleRect = toggle.getBoundingClientRect();
+    const viewportPadding = 12;
+    const spaceBelow = Math.max(0, window.innerHeight - toggleRect.bottom - viewportPadding);
+    const spaceAbove = Math.max(0, toggleRect.top - viewportPadding);
+    const desiredHeight = Math.min(320, menu.scrollHeight);
+    const opensUp = spaceBelow < desiredHeight && spaceAbove > spaceBelow;
+    const availableSpace = opensUp ? spaceAbove : spaceBelow;
+
+    menu.classList.toggle('opens-up', opensUp);
+    menu.style.maxHeight = `${Math.min(320, availableSpace)}px`;
+}
+
+document.getElementById('leaderboard-game-toggle')?.addEventListener('click', event => {
+    const isExpanded = event.currentTarget.getAttribute('aria-expanded') === 'true';
+    setLeaderboardGameMenuOpen(!isExpanded);
+});
+
+document.getElementById('leaderboard-game-menu')?.addEventListener('click', event => {
+    const option = event.target.closest('.leaderboard-game-option');
+    if (!option) return;
+
+    const game = option.dataset.game;
+    if (!setActiveLeaderboardFilter(game)) return;
+    setLeaderboardGameMenuOpen(false);
+    document.getElementById('leaderboard-game-toggle')?.focus();
+    loadLeaderboard(game, 5, 'overall');
 });
 
 document.getElementById('leaderboard-score-filters')?.addEventListener('click', event => {
@@ -997,6 +1186,11 @@ document.getElementById('leaderboard-score-filters')?.addEventListener('click', 
 });
 
 document.addEventListener('click', event => {
+    const gameFilter = document.querySelector('.leaderboard-game-filter');
+    if (gameFilter && !gameFilter.contains(event.target)) {
+        setLeaderboardGameMenuOpen(false);
+    }
+
     document.querySelectorAll('.leaderboard-best-menu-wrap').forEach(dropdown => {
         if (dropdown.contains(event.target)) return;
         const toggle = dropdown.querySelector('.leaderboard-best-toggle');
@@ -1019,6 +1213,12 @@ document.addEventListener('keydown', event => {
             toggle.focus();
         }
     });
+
+    const gameMenu = document.getElementById('leaderboard-game-menu');
+    if (gameMenu && !gameMenu.hidden) {
+        setLeaderboardGameMenuOpen(false);
+        document.getElementById('leaderboard-game-toggle')?.focus();
+    }
 });
 
 const showAllBtn = document.getElementById('show-all-leaderboard');
@@ -1051,6 +1251,42 @@ document.querySelectorAll('.play-action-btn').forEach(btn => {
         // Allow all users (including guests) to navigate to the games naturally
     });
 });
+
+function initLazyImages(container) {
+    if (!container) return;
+
+    const images = container.querySelectorAll('img[data-src]');
+    if (!images.length) return;
+
+    const loadImages = () => {
+        images.forEach(image => {
+            image.src = image.dataset.src;
+            image.removeAttribute('data-src');
+        });
+    };
+
+    if (!('IntersectionObserver' in window)) {
+        loadImages();
+        return;
+    }
+
+    let pendingImages = images.length;
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            const image = entry.target;
+            if (!entry.isIntersecting || !image.dataset.src) return;
+
+            image.src = image.dataset.src;
+            image.removeAttribute('data-src');
+            observer.unobserve(image);
+            pendingImages--;
+        });
+
+        if (pendingImages === 0) observer.disconnect();
+    }, { rootMargin: '150px 0px' });
+
+    images.forEach(image => observer.observe(image));
+}
 
 // --- SCROLL SPY ---
 function initScrollSpy() {
@@ -1114,14 +1350,18 @@ function initModalScrollLock() {
 
 document.addEventListener('DOMContentLoaded', () => {
     initParticles();
-    checkUser();
+    checkUser().then(() => {
+        initLazyImages(document.getElementById('about'));
+        initLazyImages(document.getElementById('personal-dashboard'));
+        dashboardLazyImagesReady = true;
+    });
     const requestedLeaderboard = new URLSearchParams(window.location.search).get('leaderboard');
     const requestedFilter = requestedLeaderboard
-        ? Array.from(document.querySelectorAll('.filter-btn')).find(btn => btn.dataset.game === requestedLeaderboard)
+        ? Array.from(document.querySelectorAll('.leaderboard-game-option'))
+            .find(option => option.dataset.game === requestedLeaderboard)
         : null;
     if (requestedFilter) {
-        document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-        requestedFilter.classList.add('active');
+        setActiveLeaderboardFilter(requestedLeaderboard);
         loadLeaderboard(requestedLeaderboard);
     } else {
         loadLeaderboard();
@@ -1138,4 +1378,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initial reveal check
     window.dispatchEvent(new Event('scroll'));
+});
+
+window.addEventListener('pageshow', event => {
+    if (event.persisted) checkUser();
 });

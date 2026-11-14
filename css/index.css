@@ -46,9 +46,12 @@ body.dark-mode::before {
 }
 
 .native-keyboard-mode .game-container {
-    height: 100dvh !important;
+    height: var(--game-visible-height, 100dvh) !important;
+    min-height: 0 !important;
+    max-height: var(--game-visible-height, 100dvh);
     overflow-y: auto;
     justify-content: flex-start;
+    overscroll-behavior-y: contain;
 }
 
 .native-keyboard-mode .typing-keyboard,

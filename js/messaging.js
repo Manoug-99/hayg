@@ -6,8 +6,8 @@
     root.id = 'messaging-root';
     root.innerHTML = `
         <div class="message-launcher" id="message-launcher" hidden>
-            <button class="message-launch-button" id="message-compose-open" type="button">
-                <span aria-hidden="true">✉</span> Հաղորդագրութիւն
+            <button class="message-launch-button" id="message-compose-open" type="button" aria-label="Հաղորդագրութիւններ" title="Հաղորդագրութիւններ">
+                <span aria-hidden="true">✉</span><span class="message-button-label">Հաղորդագրութիւն</span>
             </button>
         </div>
         <div class="message-backdrop" id="message-inbox" hidden>
@@ -44,6 +44,14 @@
 
     const launcher = root.querySelector('#message-launcher');
     const isMainMenu = Boolean(document.querySelector('.navbar'));
+    if (isMainMenu) {
+        const navActions = document.querySelector('.nav-actions');
+        const themeToggle = navActions?.querySelector('#dark-mode-toggle');
+        if (navActions && themeToggle) {
+            launcher.classList.add('message-launcher-nav');
+            navActions.insertBefore(launcher, themeToggle.nextSibling);
+        }
+    }
     const inbox = root.querySelector('#message-inbox');
     const inboxBody = root.querySelector('#message-inbox-body');
     const inboxStatus = root.querySelector('#message-inbox-status');
@@ -130,7 +138,7 @@
         await Promise.all([loadInbox(userId), loadAdminTools(userId)]);
     }
 
-    root.querySelector('#message-compose-open').addEventListener('click', () => {
+    launcher.querySelector('#message-compose-open').addEventListener('click', () => {
         composeStatus.textContent = '';
         composer.hidden = false;
         recipientSelect.focus();

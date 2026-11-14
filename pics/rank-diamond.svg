@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <defs>
+    <linearGradient id="diamond" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#E8FFFF"/>
+      <stop offset="40%" stop-color="#75DFFF"/>
+      <stop offset="100%" stop-color="#2676C9"/>
+    </linearGradient>
+    <linearGradient id="shine" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#8DE9FF"/>
+    </linearGradient>
+  </defs>
+  <path d="M34 76 L27 116 L48 106 L64 122 L80 106 L101 116 L94 76"
+        fill="url(#diamond)" stroke="#2676C9" stroke-width="3" stroke-linejoin="round"/>
+  <circle cx="64" cy="53" r="39" fill="url(#diamond)" stroke="#2676C9" stroke-width="4"/>
+  <circle cx="64" cy="53" r="31" fill="none" stroke="url(#shine)" stroke-width="3"/>
+  <path d="M64 29 L82 47 L64 78 L46 47 Z" fill="#FFFFFF" stroke="#2676C9" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M46 47 L64 47 L64 78 Z" fill="#A4EFFF"/>
+  <path d="M64 47 L82 47 L64 78 Z" fill="#55BFEF"/>
+  <path d="M64 29 L46 47 L57 47 Z" fill="#D9FAFF"/>
+  <path d="M64 29 L82 47 L71 47 Z" fill="#8ADFFF"/>
+</svg>

@@ -66,6 +66,16 @@
     color: var(--primary-color);
 }
 
+#time-display.is-countdown {
+    color: var(--error-color);
+    text-shadow: 0 0 14px rgba(239, 68, 68, 0.45);
+    animation: typing-countdown-pulse 600ms ease-in-out infinite alternate;
+}
+
+@keyframes typing-countdown-pulse {
+    to { transform: scale(1.12); }
+}
+
 .words-container {
     position: relative;
     width: 100%;
@@ -675,7 +685,8 @@ body.dark-mode .typing-results-card {
     animation: typing-record-celebrate 850ms ease-out;
 }
 
-.typing-results-card.new-record .typing-best-stat {
+.typing-results-card.new-record .typing-best-stat,
+.typing-results-card.new-record .typing-best-speed-stat {
     animation: typing-best-glow 1.5s ease-in-out infinite alternate;
 }
 
@@ -734,8 +745,10 @@ body.dark-mode .typing-results-card {
 }
 
 @media (prefers-reduced-motion: reduce) {
+    #time-display.is-countdown,
     .typing-results-card.new-record,
-    .typing-results-card.new-record .typing-best-stat {
+    .typing-results-card.new-record .typing-best-stat,
+    .typing-results-card.new-record .typing-best-speed-stat {
         animation: none;
     }
 }

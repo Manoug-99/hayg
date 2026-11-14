@@ -4,7 +4,7 @@ const darkModeToggle = document.getElementById('dark-mode-toggle');
 function setDarkMode(enabled) {
     body.classList.toggle('dark-mode', enabled);
     if (darkModeToggle) {
-        darkModeToggle.textContent = enabled ? '☀️' : '🌙';
+        darkModeToggle.querySelector('img').src = enabled ? 'pics/sun.png' : 'pics/night.png';
     }
     localStorage.setItem('darkMode', enabled);
 }
@@ -120,9 +120,31 @@ document.body.appendChild(hiddenMobileInput);
 let nativeKeyboardEnabled = false;
 let gameKeyboardActive = false;
 
+function syncNativeKeyboardViewport() {
+    if (!nativeKeyboardEnabled) {
+        body.style.removeProperty('--game-visible-height');
+        return;
+    }
+
+    const visibleHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+    if (Number.isFinite(visibleHeight) && visibleHeight > 0) {
+        body.style.setProperty('--game-visible-height', `${Math.floor(visibleHeight)}px`);
+    }
+}
+
+window.visualViewport?.addEventListener('resize', syncNativeKeyboardViewport);
+window.addEventListener('resize', syncNativeKeyboardViewport);
+document.addEventListener('focusin', () => {
+    if (nativeKeyboardEnabled) window.setTimeout(syncNativeKeyboardViewport, 300);
+});
+document.addEventListener('focusout', () => {
+    if (nativeKeyboardEnabled) window.setTimeout(syncNativeKeyboardViewport, 300);
+});
+
 function setNativeKeyboard(enabled) {
     nativeKeyboardEnabled = enabled;
     body.classList.toggle('native-keyboard-mode', enabled);
+    syncNativeKeyboardViewport();
     try {
         localStorage.setItem('nativeKeyboard', String(enabled));
     } catch (error) {
@@ -185,6 +207,7 @@ try {
     console.error('Could not load native keyboard preference:', error);
 }
 body.classList.toggle('native-keyboard-mode', nativeKeyboardEnabled);
+syncNativeKeyboardViewport();
 syncNativeKeyboardFocus();
 
 function keyboardModeForSelection(mode) {

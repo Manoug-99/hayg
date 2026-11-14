@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Հայկ</title>
-    <meta name="description" lang="hy" content="Հայկ (Hayg)՝ արեւմտահայերէն խաղերու հարթակ։ Խաղա՛ հայերէն Wordle՝ Բառիկ, եւ բացայայտէ՛ բառախաղեր։">
+    <meta name="description" lang="hy" content="Հայկ (Hayg)՝ արեւմտահայերէն խաղերու հարթակ։ Խաղցի՛ր հայերէն Wordle՝ Բառիկ, եւ բացայայտէ՛ բառախաղեր։">
     <meta name="description" lang="en" content="Hayg (Հայկ) is home to Western Armenian games, including Armenian Wordle (Բառիկ) and fun word games. Visit hayg.net and play in Armenian.">
     <meta property="og:type" content="website">
     <meta property="og:title" content="Հայկ">
@@ -55,16 +55,24 @@
         <div class="nav-container">
             <a href="#" class="logo">Հայկ</a>
             <div class="nav-links">
-                <a href="#games" title="Խաղեր"><span class="nav-icon">🎮</span> <span class="nav-text">Խաղեր</span></a>
-                <a href="#about" id="nav-dashboard-link" title="Մեր մասին"><span class="nav-icon">ℹ️</span> <span
+                <a href="#games" title="Խաղեր">
+                    <span class="nav-icon" aria-hidden="true">
+                        <img src="pics/videogame.png" width="24" height="24" alt="">
+                    </span>
+                    <span class="nav-text">Խաղեր</span>
+                </a>
+                <a href="#about" id="nav-dashboard-link" title="Ինչո՞ւ Խաղալ"><span class="nav-icon"
+                        aria-hidden="true"><img src="pics/info.png" width="24" height="24" alt=""></span> <span
                         class="nav-text">Ինչո՞ւ Խաղալ</span></a>
-                <a href="#leaderboard" title="Մրցանիշ"><span class="nav-icon">🏆</span> <span
+                <a href="#leaderboard" title="Մրցանիշ"><span class="nav-icon" aria-hidden="true"><img
+                            src="pics/trophy.png" width="24" height="24" alt=""></span> <span
                         class="nav-text">Մրցանիշ</span></a>
             </div>
             <div class="nav-actions">
-                <button id="dark-mode-toggle" class="icon-btn" aria-label="Toggle Dark Mode">☀️</button>
-                <button id="auth-btn" class="btn-primary auth-btn-icon"><span class="auth-icon">👤</span> <span
-                        class="auth-text">Մուտք</span></button>
+                <button id="dark-mode-toggle" class="icon-btn" aria-label="Toggle Dark Mode"><img src="pics/sun.png"
+                        width="28" height="28" alt=""></button>
+                <button id="auth-btn" class="btn-primary auth-btn-icon" aria-label="Մուտք"><span class="auth-icon"
+                        aria-hidden="true"></span> <span class="auth-text">Մուտք</span></button>
                 <button class="mobile-menu-btn" aria-label="Menu">☰</button>
             </div>
         </div>
@@ -106,7 +114,7 @@
                     </div>
                 </div>
                 <a href="spelling-game.html" class="play-action-btn">
-                    <span class="play-arrow">▶</span> <span class="btn-text">Խաղալ</span>
+                    <img class="play-arrow" src="pics/play.svg" alt="" aria-hidden="true"> <span class="btn-text">Խաղալ</span>
                 </a>
             </div>
             <!-- Hangman -->
@@ -127,12 +135,28 @@
                     </div>
                 </div>
                 <a href="hangman.html" class="play-action-btn">
-                    <span class="play-arrow">▶</span> <span class="btn-text">Խաղալ</span>
+                    <img class="play-arrow" src="pics/play.svg" alt="" aria-hidden="true"> <span class="btn-text">Խաղալ</span>
                 </a>
             </div>
             <!-- Game Card 1: Wordle -->
             <div class="app-card wordle-card" id="wordle-game-card">
-                <div class="app-card-icon">🔠</div>
+                <div class="app-card-icon" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+                        <g transform="translate(17 17)">
+                            <rect x="0" y="0" width="28" height="28" rx="6" fill="#10B981"/>
+                            <rect x="33" y="0" width="28" height="28" rx="6" fill="#475569"/>
+                            <rect x="66" y="0" width="28" height="28" rx="6" fill="#F59E0B"/>
+
+                            <rect x="0" y="33" width="28" height="28" rx="6" fill="#F59E0B"/>
+                            <rect x="33" y="33" width="28" height="28" rx="6" fill="#10B981"/>
+                            <rect x="66" y="33" width="28" height="28" rx="6" fill="#475569"/>
+
+                            <rect x="0" y="66" width="28" height="28" rx="6" fill="#475569"/>
+                            <rect x="33" y="66" width="28" height="28" rx="6" fill="#F59E0B"/>
+                            <rect x="66" y="66" width="28" height="28" rx="6" fill="#10B981"/>
+                        </g>
+                    </svg>
+                </div>
                 <div class="app-card-info">
                     <h3>Բառիկ</h3>
                     <p>Գուշակէ՛ 5-տառնոց գաղտնի բառը: Ունիս միայն 6 փորձ </p>
@@ -142,13 +166,77 @@
                     </div>
                 </div>
                 <a href="wordle.html" class="play-action-btn">
-                    <span class="play-arrow">▶</span> <span class="btn-text">Խաղալ</span>
+                    <img class="play-arrow" src="pics/play.svg" alt="" aria-hidden="true"> <span class="btn-text">Խաղալ</span>
                 </a>
             </div>
 
             <!-- Game Card 2: Typing -->
             <div class="app-card typing-card" id="typing-game-card">
-                <div class="app-card-icon">⚡</div>
+                <div class="app-card-icon" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+                    <defs>
+                        <linearGradient id="red" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0%" stop-color="#FF526F"/>
+                        <stop offset="100%" stop-color="#D90032"/>
+                        </linearGradient>
+                        <linearGradient id="pink" x1="0" y1="0" x2="1" y2="0">
+                        <stop offset="0%" stop-color="#F43F72"/>
+                        <stop offset="100%" stop-color="#FFB0C5"/>
+                        </linearGradient>
+                    </defs>
+
+                    <!-- Speed lines -->
+                    <g stroke="url(#pink)" stroke-linecap="round" fill="none">
+                        <path d="M7 25H38" stroke-width="3"/>
+                        <path d="M13 33H32" stroke-width="2"/>
+                        <path d="M5 43H25" stroke-width="3"/>
+                        <path d="M8 53H35" stroke-width="2.5"/>
+                        <path d="M5 63H25" stroke-width="2"/>
+                        <path d="M8 73H30" stroke-width="3"/>
+                        <path d="M5 83H24" stroke-width="2"/>
+                        <path d="M8 93H31" stroke-width="2.5"/>
+                        <path d="M15 103H39" stroke-width="2"/>
+                        <path d="M19 112H43" stroke-width="2.5"/>
+                        <path d="M102 76H120" stroke-width="2"/>
+                        <path d="M105 85H123" stroke-width="3"/>
+                        <path d="M101 94H118" stroke-width="2"/>
+                        <path d="M106 103H121" stroke-width="2.5"/>
+                    </g>
+
+                    <!-- Speedometer -->
+                    <circle cx="91" cy="34" r="23" fill="#8D1237"/>
+                    <circle cx="91" cy="34" r="17" fill="#F43F72"/>
+                    <circle cx="91" cy="34" r="13" fill="#FFE4EC"/>
+                    <path d="M91 34L101 25" stroke="#B40035"
+                            stroke-width="4" stroke-linecap="round"/>
+                    <circle cx="91" cy="34" r="3" fill="#B40035"/>
+
+                    <!-- Centered Keyboard -->
+                    <g transform="rotate(-10 64 76)">
+                        <rect x="21" y="53" width="86" height="53" rx="9" fill="#8F002B"/>
+                        <rect x="21" y="49" width="86" height="53" rx="9"
+                            fill="url(#red)" stroke="#FF7A95" stroke-width="1.5"/>
+
+                        <g fill="#FF8AA5" stroke="#C90035" stroke-width="0.8">
+                        <rect x="27" y="56" width="13" height="11" rx="2"/>
+                        <rect x="43" y="56" width="13" height="11" rx="2"/>
+                        <rect x="59" y="56" width="13" height="11" rx="2"/>
+                        <rect x="75" y="56" width="13" height="11" rx="2"/>
+                        <rect x="91" y="56" width="10" height="11" rx="2"/>
+
+                        <rect x="27" y="71" width="13" height="11" rx="2"/>
+                        <rect x="43" y="71" width="13" height="11" rx="2"/>
+                        <rect x="59" y="71" width="13" height="11" rx="2"/>
+                        <rect x="75" y="71" width="13" height="11" rx="2"/>
+                        <rect x="91" y="71" width="10" height="11" rx="2"/>
+
+                        <rect x="27" y="86" width="13" height="9" rx="2"/>
+                        <rect x="43" y="86" width="45" height="9" rx="2"/>
+                        <rect x="91" y="86" width="10" height="9" rx="2"/>
+                        </g>
+                    </g>
+                    </svg>
+                </div>
                 <div class="app-card-info">
                     <h3>Արագատիպ</h3>
                     <p>Որքա՞ն արագ կրնաս գրել: Փորձէ՛ քու մատներուդ արագութիւնը ժամանակին դէմ </p>
@@ -158,13 +246,50 @@
                     </div>
                 </div>
                 <a href="typing-game.html" class="play-action-btn">
-                    <span class="play-arrow">▶</span> <span class="btn-text">Խաղալ</span>
+                    <img class="play-arrow" src="pics/play.svg" alt="" aria-hidden="true"> <span class="btn-text">Խաղալ</span>
                 </a>
             </div>
 
             <!-- Game Card 3: Space -->
             <div class="app-card space-card" id="ztype-game-card">
-                <div class="app-card-icon">🚀</div>
+                <div class="app-card-icon" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+                        <defs>
+                            <linearGradient id="ztype-ship" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="#FFFFFF"/>
+                                <stop offset="100%" stop-color="#00E5FF"/>
+                            </linearGradient>
+                            <radialGradient id="ztype-glow">
+                                <stop offset="0%" stop-color="#00E5FF" stop-opacity=".7"/>
+                                <stop offset="100%" stop-color="#00E5FF" stop-opacity="0"/>
+                            </radialGradient>
+                        </defs>
+
+                        <path d="M15 22h2m17 16h1M19 72h2m88-39h2M102 91h2M29 105h2"
+                              stroke="#C8DCFF" stroke-linecap="round" stroke-width="2"/>
+                        <circle cx="49" cy="21" r="1.5" fill="#FFFFFF"/>
+                        <circle cx="108" cy="59" r="1.5" fill="#FFFFFF"/>
+                        <circle cx="24" cy="52" r="1" fill="#FFFFFF"/>
+
+                        <circle cx="83" cy="38" r="27" fill="url(#ztype-glow)"/>
+                        <path d="M105 38 94 57 72 57 61 38 72 19 94 19Z"
+                              fill="#0A1428" stroke="#00E5FF" stroke-width="2.5"/>
+
+                        <path d="M50 59 43 71 29 71 22 59 29 47 43 47Z"
+                              fill="#0A1428" stroke="#FF00E5" stroke-width="2"/>
+
+                        <path d="M64 83 77 57" stroke="#00E5FF" stroke-linecap="round"
+                              stroke-width="2.5" stroke-dasharray="4 4"/>
+                        <circle cx="74" cy="63" r="5" fill="url(#ztype-glow)"/>
+                        <circle cx="74" cy="63" r="2" fill="#FFFFFF"/>
+
+                        <ellipse cx="64" cy="107" rx="14" ry="8" fill="url(#ztype-glow)"/>
+                        <path d="M64 78 79 106 64 99 49 106z"
+                              fill="url(#ztype-ship)" stroke="#FFFFFF" stroke-width="1"/>
+                        <path d="m58 101-3 10 9-6 9 6-3-10"
+                              fill="#00E5FF" fill-opacity=".72"/>
+                    </svg>
+                </div>
                 <div class="app-card-info">
                     <h3>Աստղային Մարտ</h3>
                     <p>Պաշտպանէ՛ մոլորակդ ինկող աստղաքարերէն՝ արագ եւ ճիշդ գրելով </p>
@@ -174,13 +299,15 @@
                     </div>
                 </div>
                 <a href="ztype-game.html" class="play-action-btn">
-                    <span class="play-arrow">▶</span> <span class="btn-text">Խաղալ</span>
+                    <img class="play-arrow" src="pics/play.svg" alt="" aria-hidden="true"> <span class="btn-text">Խաղալ</span>
                 </a>
             </div>
 
             <!-- Game Card 4: Unscramble -->
             <div class="app-card bee-card" id="spelling-bee-card">
-                <div class="app-card-icon">🧩</div>
+                <div class="app-card-icon" aria-hidden="true">
+                    <img src="pics/spelling-bee-icon.svg" width="72" height="72" alt="">
+                </div>
                 <div class="app-card-info">
                     <h3>Տառախառն</h3>
                     <p>Վերադասաւորէ՛ տառերը եւ գտի՛ր պահուած բոլոր բառերը: Գտի՛ր գլխաւոր բառը </p>
@@ -190,7 +317,7 @@
                     </div>
                 </div>
                 <a href="spelling-bee.html" class="play-action-btn">
-                    <span class="play-arrow">▶</span> <span class="btn-text">Խաղալ</span>
+                    <img class="play-arrow" src="pics/play.svg" alt="" aria-hidden="true"> <span class="btn-text">Խաղալ</span>
                 </a>
             </div>
         </div>
@@ -205,9 +332,10 @@
 
             <!-- Rank & XP Card -->
             <div class="dash-card xp-card playful-card glow-card">
-                <div class="card-badge">🎯 Նպատակակէտ</div>
                 <div class="rank-display">
-                    <div class="rank-icon-wrapper" id="dash-rank-icon">🟤</div>
+                    <div class="rank-icon-wrapper">
+                        <img id="dash-rank-icon" src="pics/rank-bronze.svg" alt="" aria-hidden="true">
+                    </div>
                     <div class="rank-info">
                         <h3 id="dash-rank-name">Պղինձ Գ</h3>
                         <div class="xp-value"><span id="dash-xp">0</span> <span class="xp-label">XP</span></div>
@@ -215,7 +343,8 @@
                 </div>
                 <div class="next-milestone playful-milestone" id="dash-milestone">
                     <div class="milestone-header">
-                        <small id="dash-next-text">Յաջորդը՝ 1000 XP</small>
+                        <small id="dash-next-text">Յաջորդը՝ Պղինձ Բ (500 XP)</small>
+                        <img id="dash-next-badge" src="pics/rank-bronze.svg" alt="" aria-hidden="true">
                     </div>
                     <div class="milestone-bar playful-bar">
                         <div class="milestone-fill candy-stripe" style="width: 0%;"></div>
@@ -226,7 +355,7 @@
             <!-- Streak Card -->
             <div class="dash-card streak-card playful-card bounce-hover">
                 <div class="streak-header-playful">
-                    <div class="fire-icon-large">🔥</div>
+                    <img class="fire-icon-large is-inactive" data-src="pics/fire-static.svg" loading="lazy" decoding="async" alt="" aria-hidden="true">
                     <div class="streak-details">
                         <h3>Օրական Շարք</h3>
                         <div class="streak-number-playful"><span id="dash-streak">0</span> Օր</div>
@@ -246,15 +375,18 @@
         <h2 class="section-title">Ինչո՞ւ Խաղալ</h2>
         <div class="benefits-grid">
             <div class="benefit-card">
-                <div class="b-icon">📚</div>
+                <div class="b-icon"><img data-src="pics/read.svg" loading="lazy" decoding="async"
+                        fetchpriority="low" width="48" height="48" alt="" aria-hidden="true"></div>
                 <h4>Բառապաշարի զարգացում</h4>
             </div>
             <div class="benefit-card">
-                <div class="b-icon">⌨️</div>
+                <div class="b-icon"><img data-src="pics/keyboard.svg" loading="lazy" decoding="async"
+                        fetchpriority="low" width="48" height="48" alt="" aria-hidden="true"></div>
                 <h4>Արագ գրելու հմտութիւն</h4>
             </div>
             <div class="benefit-card">
-                <div class="b-icon">🎮</div>
+                <div class="b-icon"><img data-src="pics/gamepad.webp" loading="lazy" decoding="async"
+                        fetchpriority="low" width="48" height="48" alt="" aria-hidden="true"></div>
                 <h4>Զուարճալի ուսուցում</h4>
             </div>
         </div>
@@ -264,21 +396,31 @@
     <section id="leaderboard" class="section leaderboard-section">
         <h2 class="section-title">Մրցանիշ</h2>
 
-        <div class="leaderboard-filters">
-            <button class="filter-btn active" data-game="total">Ընդհանուր</button>
-            <button class="filter-btn" data-game="streak" title="Շարք">🔥</button>
-            <button class="filter-btn" data-game="wordle" title="Բառիկ">🔠</button>
-            <button class="filter-btn" data-game="bee" title="Տառախառն">🧩</button>
-            <button class="filter-btn" data-game="typing" title="Արագատիպ">⚡</button>
-            <button class="filter-btn" data-game="ztype" title="Աստղային Մարտ">🚀</button>
-            <button class="filter-btn" data-game="spelling" title="Ճիշդ Գրէ՛">Գ</button>
-            <button class="filter-btn" data-game="hangman" title="Կախաղան" aria-label="Կախաղան">
-                <svg class="hangman-filter-icon" viewBox="0 0 64 64" fill="none" aria-hidden="true">
-                    <path d="M8 56h48M18 56V8h28v9M18 19h28M18 29l9-13" />
-                    <circle cx="46" cy="23" r="5" />
-                    <path d="M46 28v13m0-9-7 6m7-6 7 6m-7 3-6 9m6-9 6 9" />
-                </svg>
+        <div class="leaderboard-game-filter">
+            <button id="leaderboard-game-toggle" class="leaderboard-game-toggle" type="button"
+                aria-label="Խաղի զտիչ՝ Ընդհանուր" aria-expanded="false" aria-controls="leaderboard-game-menu">
+                <span class="leaderboard-game-label">Ընդհանուր</span>
+                <span class="leaderboard-game-chevron" aria-hidden="true"></span>
             </button>
+            <div id="leaderboard-game-menu" class="leaderboard-game-menu" role="group"
+                aria-label="Խաղերու ֆիլտրեր" hidden>
+                <button class="leaderboard-game-option active" type="button" data-game="total"
+                    aria-pressed="true">Ընդհանուր</button>
+                <button class="leaderboard-game-option" type="button" data-game="streak"
+                    aria-pressed="false">Շարք</button>
+                <button class="leaderboard-game-option" type="button" data-game="wordle"
+                    aria-pressed="false">Բառիկ</button>
+                <button class="leaderboard-game-option" type="button" data-game="bee"
+                    aria-pressed="false">Տառախառն</button>
+                <button class="leaderboard-game-option" type="button" data-game="typing"
+                    aria-pressed="false">Արագատիպ</button>
+                <button class="leaderboard-game-option" type="button" data-game="ztype"
+                    aria-pressed="false">Աստղային Մարտ</button>
+                <button class="leaderboard-game-option" type="button" data-game="spelling"
+                    aria-pressed="false">Ճիշդ Գրէ՛</button>
+                <button class="leaderboard-game-option" type="button" data-game="hangman"
+                    aria-pressed="false">Կախաղան</button>
+            </div>
         </div>
         <div id="leaderboard-score-filters" class="leaderboard-score-filters" hidden>
         </div>
@@ -302,9 +444,14 @@
                 </tbody>
             </table>
             <div class="leaderboard-footer" style="gap: 1rem;">
-                <button id="show-all-leaderboard" class="btn-secondary small">Տեսնել աւելին</button>
-                <button id="collapse-leaderboard" class="btn-secondary small" style="display: none;"
-                    title="Փակել">🔼</button>
+                <button id="show-all-leaderboard" class="btn-secondary small leaderboard-control-btn"
+                    aria-label="Տեսնել աւելին" title="Տեսնել աւելին">
+                    <span class="back-icon leaderboard-more-icon" aria-hidden="true"></span>
+                </button>
+                <button id="collapse-leaderboard" class="btn-secondary small leaderboard-control-btn"
+                    style="display: none;" aria-label="Վերադառնալ" title="Վերադառնալ">
+                    <span class="back-icon leaderboard-back-icon" aria-hidden="true"></span>
+                </button>
             </div>
         </div>
     </section>
@@ -397,7 +544,7 @@
                 <button id="verify-btn" class="btn-primary w-100">Հաստատել</button>
                 <div class="form-error" id="verify-error"></div>
                 <button id="back-to-signup"
-                    style="background: none; border: none; color: var(--primary); margin-top: 1rem; cursor: pointer; width: 100%; font-weight: 600;">Յետ
+                    style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; background: none; border: none; color: var(--primary); margin-top: 1rem; cursor: pointer; width: 100%; font-weight: 600;"><span class="back-icon" aria-hidden="true"></span>Յետ
                     դէպի գրանցում</button>
             </div>
         </div>

@@ -32,11 +32,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     let audioContext;
 
     function initAudio() {
-        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContextClass) return;
+        audioContext = audioContext || new AudioContextClass();
+        if (audioContext.state === "suspended") {
+            audioContext.resume().catch(error => console.warn("Could not enable Wordle sounds:", error));
+        }
     }
 
     function playClickSound() {
         if (!audioContext) initAudio();
+        if (!audioContext) return;
 
         // Typewriter mechanical click (white noise burst through a bandpass filter)
         const bufferSize = audioContext.sampleRate * 0.04; // 40ms buffer
@@ -65,6 +71,45 @@ document.addEventListener("DOMContentLoaded", async () => {
         noiseSource.start();
     }
 
+    function playRevealSound(color) {
+        if (!audioContext || audioContext.state !== "running" || color === "absent") return;
+
+        const start = audioContext.currentTime;
+        const oscillator = audioContext.createOscillator();
+        const volume = audioContext.createGain();
+        oscillator.type = "sine";
+        oscillator.frequency.setValueAtTime(color === "correct" ? 880 : 660, start);
+        oscillator.frequency.exponentialRampToValueAtTime(color === "correct" ? 1180 : 780, start + 0.12);
+        volume.gain.setValueAtTime(0.0001, start);
+        volume.gain.linearRampToValueAtTime(0.12, start + 0.015);
+        volume.gain.exponentialRampToValueAtTime(0.0001, start + 0.18);
+        oscillator.connect(volume);
+        volume.connect(audioContext.destination);
+        oscillator.start(start);
+        oscillator.stop(start + 0.19);
+    }
+
+    function playRoundEndSound(didWin) {
+        if (!audioContext || audioContext.state !== "running") return;
+
+        const start = audioContext.currentTime;
+        const notes = didWin ? [660, 880, 1100] : [330, 247, 185];
+        notes.forEach((frequency, index) => {
+            const noteStart = start + index * 0.12;
+            const oscillator = audioContext.createOscillator();
+            const volume = audioContext.createGain();
+            oscillator.type = didWin ? "sine" : "triangle";
+            oscillator.frequency.setValueAtTime(frequency, noteStart);
+            volume.gain.setValueAtTime(0.0001, noteStart);
+            volume.gain.linearRampToValueAtTime(0.13, noteStart + 0.015);
+            volume.gain.exponentialRampToValueAtTime(0.0001, noteStart + 0.24);
+            oscillator.connect(volume);
+            volume.connect(audioContext.destination);
+            oscillator.start(noteStart);
+            oscillator.stop(noteStart + 0.25);
+        });
+    }
+
     document.addEventListener('click', initAudio, { once: true });
 
     // Armenian keyboard layout (phonetic style)
@@ -72,6 +117,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     let allKeys = [];
 
     function initBoard() {
+        board.classList.toggle("word-length-3", wordLength === 3);
+
         for (let i = 0; i < maxGuesses; i++) {
             let row = document.createElement("div");
             row.className = "tile-row";
@@ -223,6 +270,15 @@ document.addEventListener("DOMContentLoaded", async () => {
             setTimeout(() => {
                 box.classList.add("flip");
                 box.setAttribute("data-state", colors[i]);
+                if (colors[i] === "correct" || colors[i] === "present") {
+                    box.classList.add(colors[i] === "correct" ? "reveal-correct" : "reveal-present");
+                    box.addEventListener("animationend", event => {
+                        if (event.animationName === "wordle-correct-glow" || event.animationName === "wordle-present-glow") {
+                            box.classList.remove("reveal-correct", "reveal-present");
+                        }
+                    });
+                }
+                playRevealSound(colors[i]);
                 updateKeyboardColor(letter, colors[i]);
             }, delay);
             delay += 250;
@@ -235,7 +291,9 @@ document.addEventListener("DOMContentLoaded", async () => {
                 isGameOver = true;
                 const scoreEarned = 100 + (guessesRemaining * 50);
                 if (window.HaygAPI) window.HaygAPI.updateScore('wordle', scoreEarned);
-                setTimeout(() => showEndOverlay(`Շնորհաւոր, յաղթեցիր:`), 500);
+                board.classList.add("wordle-win");
+                playRoundEndSound(true);
+                setTimeout(() => showEndOverlay(`Շնորհաւոր, յաղթեցիր:`, true), 500);
             } else {
                 guessesRemaining -= 1;
                 currentGuess = [];
@@ -243,7 +301,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
                 if (guessesRemaining === 0) {
                     isGameOver = true;
-                    setTimeout(() => showEndOverlay(`Աւարտ։ Բառն էր՝ ${targetWord}`), 500);
+                    board.classList.add("wordle-loss");
+                    playRoundEndSound(false);
+                    setTimeout(() => showEndOverlay(`Աւարտ։ Բառն էր՝ ${targetWord}`, false), 500);
                 }
             }
         }, delay);
@@ -380,11 +440,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         hintBtn.addEventListener("click", useHint);
     }
 
-    function showEndOverlay(msg) {
+    function showEndOverlay(msg, didWin) {
         const overlayTitle = startOverlay.querySelector("h2");
         if (overlayTitle) overlayTitle.textContent = msg;
         const overlayBtn = startOverlay.querySelector(".start-btn");
         if (overlayBtn) overlayBtn.textContent = "Նոր Խաղ";
+        startOverlay.classList.toggle("wordle-won", didWin);
+        startOverlay.classList.toggle("wordle-lost", !didWin);
         startOverlay.classList.remove("hidden");
         isGameStarted = false;
         window.setGameKeyboardActive?.(false);
@@ -398,6 +460,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         guessesRemaining = maxGuesses;
         isGameOver = false;
         isChecking = false;
+        board.classList.remove("wordle-win", "wordle-loss");
+        startOverlay.classList.remove("wordle-won", "wordle-lost");
         targetWord = getNewWord(wordLength);
         revealedIndices = new Set();
         syncHintsFromAPI();

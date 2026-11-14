@@ -1,4 +1,5 @@
-#messaging-root [hidden] {
+#messaging-root [hidden],
+.message-launcher[hidden] {
     display: none !important;
 }
 
@@ -7,6 +8,34 @@
     right: max(18px, env(safe-area-inset-right));
     bottom: max(18px, env(safe-area-inset-bottom));
     z-index: 10000;
+}
+
+.message-launcher-nav {
+    position: static;
+    z-index: auto;
+}
+
+.message-launcher-nav .message-launch-button {
+    width: 44px;
+    min-height: 44px;
+    padding: 0;
+    gap: 0;
+    border: 1px solid var(--glass-border);
+    border-radius: 50%;
+    background: var(--glass-bg);
+    color: var(--text-light);
+    font-size: 1.2rem;
+    line-height: 1;
+    box-shadow: var(--glass-shadow);
+}
+
+.message-launcher-nav .message-launch-button:hover {
+    background: var(--glass-bg);
+    transform: scale(1.1);
+}
+
+.message-launcher-nav .message-button-label {
+    display: none;
 }
 
 .message-launch-button,
