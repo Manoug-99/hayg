@@ -651,10 +651,15 @@ body.dark-mode .streak-content {
     border-radius: 50%;
     background: var(--surface-bg, rgba(30, 41, 59, 0.85));
     color: var(--text-color, #f8fafc);
-    font-size: 22px;
     cursor: pointer;
     box-shadow: var(--surface-shadow, 0 4px 15px rgba(0, 0, 0, 0.2));
     z-index: 60;
+}
+
+.keyboard-settings-button svg {
+    display: block;
+    width: 22px;
+    height: 22px;
 }
 
 .keyboard-settings-button:focus-visible,

@@ -83,9 +83,31 @@ const gameHeader = document.querySelector('.game-header');
 const keyboardSettingsButton = document.createElement('button');
 keyboardSettingsButton.type = 'button';
 keyboardSettingsButton.className = 'keyboard-settings-button';
-keyboardSettingsButton.textContent = '⌨️';
 keyboardSettingsButton.title = 'Ստեղնաշարի կարգաւորումներ';
 keyboardSettingsButton.setAttribute('aria-label', 'Բացել ստեղնաշարի կարգաւորումները');
+
+const keyboardIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+keyboardIcon.setAttribute('viewBox', '0 0 24 24');
+keyboardIcon.setAttribute('aria-hidden', 'true');
+keyboardIcon.setAttribute('focusable', 'false');
+keyboardIcon.setAttribute('fill', 'none');
+keyboardIcon.setAttribute('stroke', 'currentColor');
+keyboardIcon.setAttribute('stroke-width', '1.7');
+keyboardIcon.setAttribute('stroke-linecap', 'round');
+keyboardIcon.setAttribute('stroke-linejoin', 'round');
+
+const keyboardIconOutline = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+keyboardIconOutline.setAttribute('x', '2.5');
+keyboardIconOutline.setAttribute('y', '6.5');
+keyboardIconOutline.setAttribute('width', '19');
+keyboardIconOutline.setAttribute('height', '11');
+keyboardIconOutline.setAttribute('rx', '1.8');
+keyboardIcon.appendChild(keyboardIconOutline);
+
+const keyboardIconKeys = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+keyboardIconKeys.setAttribute('d', 'M5.5 10h.8 M8.7 10h.8 M11.9 10h.8 M15.1 10h.8 M18.3 10h.2 M5.5 12.5h.8 M8.7 12.5h.8 M11.9 12.5h.8 M15.1 12.5h.8 M18.3 12.5h.2 M7.5 15h9');
+keyboardIcon.appendChild(keyboardIconKeys);
+keyboardSettingsButton.appendChild(keyboardIcon);
 
 if (keyboardArea && gameId === 'ztype-game-body' && ztypeStartMenu) {
     ztypeStartMenu.appendChild(keyboardSettingsButton);
