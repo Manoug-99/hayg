@@ -409,7 +409,7 @@
 .letter-tile:hover {
     transform: translateY(-4px) scale(1.03);
     border-color: #f59e0b;
-    box-shadow: 0 7px 0 var(--bee-tile-shadow-bottom), 0 12px 20px rgba(245, 158, 11, 0.25);
+    box-shadow: none;
 }
 
 .letter-tile:active,
@@ -432,7 +432,7 @@
 
 .letter-tile.used:hover {
     transform: translateY(1px) scale(1);
-    box-shadow: 0 5px 0 #92400e, 0 8px 20px rgba(217, 119, 6, 0.55) !important;
+    box-shadow: none !important;
     border-color: #fef3c7 !important;
 }
 
@@ -445,7 +445,7 @@
 
 #spelling-bee-body.dark-mode .letter-tile.used:hover {
     border-color: #fde68a !important;
-    box-shadow: 0 5px 0 #78350f, 0 8px 24px rgba(245, 158, 11, 0.5) !important;
+    box-shadow: none !important;
 }
 
 @keyframes tileUsedPop {
@@ -496,7 +496,7 @@
     background: var(--key-hover);
     border-color: rgba(245, 158, 11, 0.4);
     transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+    box-shadow: none;
 }
 
 .control-btn:active,
@@ -518,7 +518,7 @@
 .control-btn.enter:hover {
     background: linear-gradient(135deg, #fbbf24 0%, #b45309 100%);
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(217, 119, 6, 0.45);
+    box-shadow: none;
 }
 
 .control-btn.shuffle {
@@ -770,6 +770,6 @@
 
 .start-btn:hover {
     transform: translateY(-2px) scale(1.02);
-    box-shadow: 0 10px 28px rgba(217, 119, 6, 0.5);
+    box-shadow: none;
     background: linear-gradient(135deg, #fbbf24, #b45309);
 }

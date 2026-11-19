@@ -549,8 +549,8 @@
 
             if (!scoredRound) {
                 saveStatus.textContent = personalBestSaveFailed
-                    ? "Անձնական լաւագոյնը չյաջողեցաւ պահել։ Այսօր XP շահելու խաղերդ սպառած են։"
-                    : "Այսօր XP շահելու խաղերդ սպառած են։";
+                    ? "Անձնական լաւագոյնը չյաջողեցաւ պահել։ Այսօր Նիշ շահելու խաղերդ սպառած են։"
+                    : "Այսօր Նիշ շահելու խաղերդ սպառած են։";
                 return;
             }
 
@@ -558,16 +558,16 @@
                 const saved = await window.HaygAPI.updateScore("spelling", score, scoredRoundId);
                 if (!saved) {
                     saveStatus.textContent = personalBestSaveFailed
-                        ? "XP-ն եւ անձնական լաւագոյնը չյաջողեցան պահել։"
-                        : "XP-ն չյաջողեցաւ պահել։";
+                        ? "Նիշը եւ անձնական լաւագոյնը չյաջողեցան պահել։"
+                        : "Նիշը չյաջողեցաւ պահել։";
                     return;
                 }
                 saveStatus.textContent = personalBestSaveFailed
-                    ? "XP-ն պահուեցաւ, բայց անձնական լաւագոյնը չյաջողեցաւ պահել։"
+                    ? "Նիշը պահուեցաւ, բայց անձնական լաւագոյնը չյաջողեցաւ պահել։"
                     : "Արդիւնքը պահուեցաւ։";
             } catch (error) {
                 console.error("Could not save spelling-game score:", error);
-                saveStatus.textContent = "XP-ն չյաջողեցաւ պահել։ Կրնաս կրկին փորձել յետոյ։";
+                saveStatus.textContent = "Նիշը չյաջողեցաւ պահել։ Կրնաս կրկին փորձել յետոյ։";
             }
         }
 
@@ -636,7 +636,7 @@
             xpDescription.hidden = false;
             const remaining = Math.min(3, Math.max(0, status.gamesRemaining));
             xpRemaining.textContent = `${remaining}/3`;
-            xpCounter.setAttribute("aria-label", `Այսօր XP շահելու ${remaining} խաղ մնացած է`);
+            xpCounter.setAttribute("aria-label", `Այսօր Նիշ շահելու ${remaining} խաղ մնացած է`);
             xpCounter.dataset.state = remaining > 0 ? "available" : "exhausted";
         }
 
@@ -647,7 +647,7 @@
             xpCounter.hidden = false;
             xpDescription.hidden = false;
             xpRemaining.textContent = "—/3";
-            xpCounter.setAttribute("aria-label", "XP խաղերու մնացորդը հասանելի չէ");
+            xpCounter.setAttribute("aria-label", "Նիշ խաղերու մնացորդը հասանելի չէ");
             xpCounter.dataset.state = "unavailable";
         }
 

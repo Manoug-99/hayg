@@ -584,7 +584,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         resultWord.textContent = won ? currentWord : `Գաղտնի բառը՝ ${currentWord}`;
         resultPoints.textContent = roundNewPersonalBest
             ? `Նոր անձնական լաւագոյն՝ ${currentStreak} `
-            : roundPoints ? `+${roundPoints} XP` : "Այս փուլին XP չվաստակեցիր։";
+            : roundPoints ? `+${roundPoints} Նիշ` : "Այս փուլին Նիշ չվաստակեցիր։";
         nextButton.textContent = "Յաջորդ բառը";
         resultOverlay.classList.remove("hidden");
         window.setGameKeyboardActive?.(false);

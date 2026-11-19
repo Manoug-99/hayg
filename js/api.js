@@ -14,7 +14,7 @@ try {
 }
 
 // --- GLOBAL TOAST SYSTEM ---
-window.showToast = function (message, type = 'success', duration = null) {
+window.showToast = function (message, type = 'success', duration = null, showIcon = true) {
     // If streak notification, show the interactive streak overlay animation
     if (type === 'streak') {
         const match = typeof message === 'string' ? message.match(/\d+/) : null;
@@ -46,21 +46,23 @@ window.showToast = function (message, type = 'success', duration = null) {
     if (type === 'error') icon = '❌';
     if (type === 'warning') icon = '⚠️';
 
-    const iconNode = document.createElement(type === 'streak' ? 'img' : 'span');
-    if (type === 'streak') {
-        iconNode.src = 'pics/fire-static.svg';
-        iconNode.alt = '';
-        iconNode.setAttribute('aria-hidden', 'true');
-        iconNode.className = 'toast-streak-icon';
-    } else {
-        iconNode.textContent = icon;
-        iconNode.style.marginRight = '8px';
+    if (showIcon) {
+        const iconNode = document.createElement(type === 'streak' ? 'img' : 'span');
+        if (type === 'streak') {
+            iconNode.src = 'pics/streaks/fire-static.svg';
+            iconNode.alt = '';
+            iconNode.setAttribute('aria-hidden', 'true');
+            iconNode.className = 'toast-streak-icon';
+        } else {
+            iconNode.textContent = icon;
+            iconNode.style.marginRight = '8px';
+        }
+        toast.appendChild(iconNode);
     }
 
     const textNode = document.createElement('span');
     textNode.textContent = String(message ?? '');
 
-    toast.appendChild(iconNode);
     toast.appendChild(textNode);
 
     container.appendChild(toast);
@@ -117,7 +119,7 @@ window.HaygAPI = {
                 const newTotalScore = Number(award.total_score) || 0;
                 const newStreak = Number(award.streak_count) || 0;
                 if (window.showToast && score > 0) {
-                    window.showToast(`+${score} XP Վաստակած էք!`, 'success');
+                    window.showToast(`+${score} Նիշ Վաստակած էք!`, 'success', null, false);
                 }
                 if (window.updateDashboardUI) {
                     window.updateDashboardUI(true);
@@ -158,7 +160,7 @@ window.HaygAPI = {
 
         // Show XP alert for the game for ALL players (including guests)
         if (window.showToast && score > 0) {
-            window.showToast(`+${score} XP Վաստակած էք!`, 'success');
+            window.showToast(`+${score} Նիշ Վաստակած էք!`, 'success', null, false);
         }
 
         if (!sb_api) return null;
@@ -497,25 +499,25 @@ window.HaygAPI = {
 
 window.getRankDetails = function (xp) {
     const ranks = [
-        { name: 'Պղինձ Գ', xp: 0, color: '#cd7f32', badge: 'pics/rank-bronze.svg' },
-        { name: 'Պղինձ Բ', xp: 500, color: '#cd7f32', badge: 'pics/rank-bronze.svg' },
-        { name: 'Պղինձ Ա', xp: 1000, color: '#cd7f32', badge: 'pics/rank-bronze.svg' },
-        { name: 'Արծաթ Գ', xp: 2000, color: '#c0c0c0', badge: 'pics/rank-silver.svg' },
-        { name: 'Արծաթ Բ', xp: 3500, color: '#c0c0c0', badge: 'pics/rank-silver.svg' },
-        { name: 'Արծաթ Ա', xp: 5000, color: '#c0c0c0', badge: 'pics/rank-silver.svg' },
-        { name: 'Ոսկի Գ', xp: 7500, color: '#ffd700', badge: 'pics/rank-gold.svg' },
-        { name: 'Ոսկի Բ', xp: 10500, color: '#ffd700', badge: 'pics/rank-gold.svg' },
-        { name: 'Ոսկի Ա', xp: 14000, color: '#ffd700', badge: 'pics/rank-gold.svg' },
-        { name: 'Ադամանդ Գ', xp: 18500, color: '#00f2ff', badge: 'pics/rank-diamond.svg' },
-        { name: 'Ադամանդ Բ', xp: 24000, color: '#00f2ff', badge: 'pics/rank-diamond.svg' },
-        { name: 'Ադամանդ Ա', xp: 30000, color: '#00f2ff', badge: 'pics/rank-diamond.svg' },
-        { name: 'Զմրուխտ Գ', xp: 40000, color: '#50c878', badge: 'pics/rank-emerald.svg' },
-        { name: 'Զմրուխտ Բ', xp: 45000, color: '#50c878', badge: 'pics/rank-emerald.svg' },
-        { name: 'Զմրուխտ Ա', xp: 50000, color: '#50c878', badge: 'pics/rank-emerald.svg' },
-        { name: 'Իշխան Գ', xp: 60000, color: '#ff00ff', badge: 'pics/rank-pro.svg' },
-        { name: 'Իշխան Բ', xp: 70000, color: '#ff00ff', badge: 'pics/rank-pro.svg' },
-        { name: 'Իշխան Ա', xp: 80000, color: '#ff00ff', badge: 'pics/rank-pro.svg' },
-        { name: 'Վարպետ', xp: 100000, color: '#922844', badge: 'pics/rank-master.svg' },
+        { name: 'Պղինձ Գ', xp: 0, color: '#cd7f32', badge: 'pics/ranks/rank-bronze.svg' },
+        { name: 'Պղինձ Բ', xp: 500, color: '#cd7f32', badge: 'pics/ranks/rank-bronze-b.svg' },
+        { name: 'Պղինձ Ա', xp: 1000, color: '#cd7f32', badge: 'pics/ranks/rank-bronze-a.svg' },
+        { name: 'Արծաթ Գ', xp: 2000, color: '#c0c0c0', badge: 'pics/ranks/rank-silver.svg' },
+        { name: 'Արծաթ Բ', xp: 3500, color: '#c0c0c0', badge: 'pics/ranks/rank-silver-b.svg' },
+        { name: 'Արծաթ Ա', xp: 5000, color: '#c0c0c0', badge: 'pics/ranks/rank-silver-a.svg' },
+        { name: 'Ոսկի Գ', xp: 7500, color: '#ffd700', badge: 'pics/ranks/rank-gold.svg' },
+        { name: 'Ոսկի Բ', xp: 10500, color: '#ffd700', badge: 'pics/ranks/rank-gold-b.svg' },
+        { name: 'Ոսկի Ա', xp: 14000, color: '#ffd700', badge: 'pics/ranks/rank-gold-a.svg' },
+        { name: 'Ադամանդ Գ', xp: 18500, color: '#00f2ff', badge: 'pics/ranks/rank-diamond.svg' },
+        { name: 'Ադամանդ Բ', xp: 24000, color: '#00f2ff', badge: 'pics/ranks/rank-diamond-b.svg' },
+        { name: 'Ադամանդ Ա', xp: 30000, color: '#00f2ff', badge: 'pics/ranks/rank-diamond-a.svg' },
+        { name: 'Զմրուխտ Գ', xp: 40000, color: '#50c878', badge: 'pics/ranks/rank-emerald.svg' },
+        { name: 'Զմրուխտ Բ', xp: 45000, color: '#50c878', badge: 'pics/ranks/rank-emerald-b.svg' },
+        { name: 'Զմրուխտ Ա', xp: 50000, color: '#50c878', badge: 'pics/ranks/rank-emerald-a.svg' },
+        { name: 'Իշխան Գ', xp: 60000, color: '#ff00ff', badge: 'pics/ranks/rank-pro.svg' },
+        { name: 'Իշխան Բ', xp: 70000, color: '#ff00ff', badge: 'pics/ranks/rank-pro-b.svg' },
+        { name: 'Իշխան Ա', xp: 80000, color: '#ff00ff', badge: 'pics/ranks/rank-pro-a.svg' },
+        { name: 'Վարպետ', xp: 100000, color: '#922844', badge: 'pics/ranks/rank-master.svg' },
     ];
 
     let currentRank = ranks[0];
@@ -904,6 +906,60 @@ window.startConfetti = function () {
     update();
 };
 
+const streakMotivationalQuotes = [
+    'Ամէն օրուան փոքր քայլը քեզ աւելի մօտ կը բերէ նպատակիդ։',
+    'Շարունակէ՛ քու յարատեւութիւնդ օրէ օր կը զօրանայ։',
+    'Այսօրուան ջանքերդ վաղուան յաջողութիւնդ կը կառուցեն։',
+    'Մի՛ կանգնիր ամէն նոր օր նոր կարելիութիւն մըն է։',
+    'Քու հետեւողականութիւնդ ուժիդ իսկական նշանն է։',
+    'Մեծ յաջողութիւնները կը սկսին փոքր, բայց հաստատ քայլերէ։',
+    'Հաւատա՛ կարողութեանդ ամէն փորձ քեզ աւելի կը զարգացնէ։',
+    'Քայլ առ քայլ, օրէ օր, աւելի կը մօտենաս նպատակիդ։',
+    'Յարատեւէ՛, նոյնիսկ երբ ճամբան դժուար է դուն կրնաս։',
+    'Ամէն օր նոր առիթ մըն է՝ աւելի լաւը ընելու։'
+];
+const streakMilestoneQuotes = {
+    1: 'Առաջին քայլդ կատարեցիր ամէն երկար ճամբայ այսպէս կը սկսի։',
+    7: 'Շաբաթ մը շարունակեցիր յարատեւութիւնդ արդէն իսկական ուժի վերածուած է։',
+    14: 'Երկու շաբաթուան յարատեւութիւնդ ապացոյց մըն է, թէ կրնաս շարունակել։',
+    30: 'Ամբողջ ամիս մը՝ ամէն օր քայլ առ քայլ։ Ասիկա մեծ յաջողութիւն մըն է։',
+    60: 'Վաթսուն օր շարունակ՝ դուն ինքզինքդ կը գերազանցես։ Շարունակէ՛ նոյն ոգիով։',
+    100: 'Հարիւր օրուան այս յարատեւութիւնը մեծ նուաճում մըն է հպարտ եղիր։'
+};
+let lastStreakQuote = '';
+
+function typeStreakQuote(message, status, quote) {
+    if (!message || !status) return;
+
+    const previousTimer = Number(message.dataset.typingTimer);
+    if (previousTimer) window.clearInterval(previousTimer);
+
+    status.textContent = quote;
+    message.textContent = '';
+    message.classList.add('is-typing');
+
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        message.textContent = quote;
+        message.classList.remove('is-typing');
+        delete message.dataset.typingTimer;
+        return;
+    }
+
+    const characters = Array.from(quote);
+    let index = 0;
+    const timer = window.setInterval(() => {
+        message.textContent += characters[index];
+        index++;
+
+        if (index >= characters.length) {
+            window.clearInterval(timer);
+            delete message.dataset.typingTimer;
+            message.classList.remove('is-typing');
+        }
+    }, 32);
+    message.dataset.typingTimer = String(timer);
+}
+
 // --- STREAK OVERLAY & FIRE ANIMATION ---
 window.showStreakAnimation = function (streakCount = 1) {
     // Dismiss keyboard on mobile
@@ -921,6 +977,13 @@ window.showStreakAnimation = function (streakCount = 1) {
     const dismissOverlay = () => {
         if (overlay) {
             overlay.classList.remove('show');
+            const message = overlay.querySelector('.streak-msg');
+            const typingTimer = Number(message?.dataset.typingTimer);
+            if (typingTimer) {
+                window.clearInterval(typingTimer);
+                delete message.dataset.typingTimer;
+                message.classList.remove('is-typing');
+            }
         }
     };
 
@@ -933,14 +996,14 @@ window.showStreakAnimation = function (streakCount = 1) {
             <div class="streak-content">
                 <div class="streak-label">ՕՐԱԿԱՆ ՇԱՐՔ</div>
                 <div class="streak-fire-container">
-                    <div class="streak-fire-glow"></div>
-                    <img class="streak-flame-icon" src="pics/fire.svg" alt="" aria-hidden="true">
+                    <img class="streak-flame-icon" src="pics/streaks/fire.svg" alt="" aria-hidden="true">
                 </div>
                 <div class="streak-count-display">
                     <span class="streak-count-number">${streakCount}</span>
                     <span class="streak-count-text">Օրուայ Շարք</span>
                 </div>
-                <div class="streak-msg">Շնորհաւոր! Դուք յաջողութեամբ պահպանեցիք ձեր օրական շարքը:</div>
+                <div class="streak-msg" aria-hidden="true"></div>
+                <div class="streak-msg-status" role="status" aria-live="polite"></div>
                 <button type="button" class="streak-btn" id="streak-continue-btn">Շարունակել</button>
             </div>
         `;
@@ -953,6 +1016,21 @@ window.showStreakAnimation = function (streakCount = 1) {
     } else {
         overlay.querySelector('.streak-count-number').textContent = streakCount;
     }
+
+    let quote = streakMilestoneQuotes[streakCount];
+    if (!quote) {
+        let quoteIndex = Math.floor(Math.random() * streakMotivationalQuotes.length);
+        if (streakMotivationalQuotes[quoteIndex] === lastStreakQuote) {
+            quoteIndex = (quoteIndex + 1) % streakMotivationalQuotes.length;
+        }
+        quote = streakMotivationalQuotes[quoteIndex];
+    }
+    lastStreakQuote = quote;
+    typeStreakQuote(
+        overlay.querySelector('.streak-msg'),
+        overlay.querySelector('.streak-msg-status'),
+        quote
+    );
 
     // Trigger reflow to ensure CSS transitions happen properly
     void overlay.offsetWidth;
@@ -1051,10 +1129,10 @@ window.showGuestOverlay = function () {
                 <div class="guest-label">ՀԻՒՐԻ ԿԱՐԳԱՎԻՃԱԿ</div>
                 <div class="guest-icon-container">
                     <div class="guest-icon-glow"></div>
-                    <img class="guest-icon" src="pics/profile-0.svg" alt="" width="120" height="120">
+                    <img class="guest-icon" src="pics/profiles/profile-0.svg" alt="" width="120" height="120">
                 </div>
                 <div class="guest-title">Կը խաղաք որպէս հիւր</div>
-                <div class="guest-msg">Ձեր նիշերը պիտի չպահուին: Գրանցուէցէ՛ք ձեր նիշերը պահպանելու համար:</div>
+                <div class="guest-msg">Ձեր նիշերը պիտի չպահուին: Գրանցուեցէ՛ք ձեր նիշերը պահպանելու համար:</div>
                 <div class="guest-actions">
                     <button type="button" class="guest-signup-btn" id="guest-signup-btn">
                         <span>Գրանցուիլ</span>

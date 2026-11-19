@@ -850,7 +850,7 @@
 
 .hangman-overlay-card .start-btn:hover {
     background: var(--button-hover);
-    box-shadow: 0 12px 30px rgba(124, 58, 237, 0.42);
+    box-shadow: none;
 }
 
 .hangman-overlay-card .start-btn:focus-visible,

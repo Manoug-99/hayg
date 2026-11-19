@@ -145,6 +145,32 @@ function isArmenian(text) {
 
 // --- AUTHENTICATION FUNCTIONS ---
 
+function setAuthButtonLoading(button, isLoading, loadingText = 'Կը բեռնաւորուի') {
+    if (isLoading) {
+        button.dataset.defaultText = button.textContent;
+        button.disabled = true;
+        button.setAttribute('aria-busy', 'true');
+
+        const dots = document.createElement('span');
+        dots.className = 'auth-loading-dots';
+        dots.setAttribute('aria-hidden', 'true');
+        for (let i = 0; i < 3; i++) {
+            dots.appendChild(document.createElement('span'));
+        }
+
+        const status = document.createElement('span');
+        status.className = 'auth-loading-status';
+        status.textContent = loadingText;
+        button.replaceChildren(dots, status);
+        return;
+    }
+
+    button.disabled = false;
+    button.removeAttribute('aria-busy');
+    button.textContent = button.dataset.defaultText || '';
+    delete button.dataset.defaultText;
+}
+
 async function checkUser() {
     if (!sb) return null;
 
@@ -173,8 +199,7 @@ async function signUp(email, password, name) {
     }
 
     const signupBtn = signupForm.querySelector('button');
-    signupBtn.disabled = true;
-    signupBtn.textContent = 'Կը գրանցուի...';
+    setAuthButtonLoading(signupBtn, true);
 
     try {
         const { data, error } = await sb.auth.signUp({
@@ -187,9 +212,6 @@ async function signUp(email, password, name) {
                 }
             }
         });
-
-        signupBtn.disabled = false;
-        signupBtn.textContent = 'Գրանցուիլ';
 
         if (error) {
             let msg = error.message;
@@ -207,9 +229,9 @@ async function signUp(email, password, name) {
             showVerificationSection();
         }
     } catch (err) {
-        signupBtn.disabled = false;
-        signupBtn.textContent = 'Գրանցուիլ';
         showToast('System error during signup', 'error');
+    } finally {
+        setAuthButtonLoading(signupBtn, false);
     }
 }
 
@@ -217,17 +239,13 @@ async function signIn(email, password) {
     if (!sb) return showToast('Supabase is not configured yet.', 'error');
 
     const loginBtn = loginForm.querySelector('button');
-    loginBtn.disabled = true;
-    loginBtn.textContent = 'Մուտք կը գործէ...';
+    setAuthButtonLoading(loginBtn, true);
 
     try {
         const { data, error } = await sb.auth.signInWithPassword({
             email: email,
             password: password,
         });
-
-        loginBtn.disabled = false;
-        loginBtn.textContent = 'Մուտք';
 
         if (error) {
             showToast('Մուտքը ձախողեցաւ: Սխալ ել-նամակ կամ գաղտնաբառ:', 'error');
@@ -238,9 +256,9 @@ async function signIn(email, password) {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     } catch (err) {
-        loginBtn.disabled = false;
-        loginBtn.textContent = 'Մուտք';
         showToast('System error during signin', 'error');
+    } finally {
+        setAuthButtonLoading(loginBtn, false);
     }
 }
 
@@ -248,8 +266,7 @@ async function verifyEmailCode(email, code) {
     if (!sb) return;
 
     const verifyBtn = document.getElementById('verify-btn');
-    verifyBtn.disabled = true;
-    verifyBtn.textContent = 'Կը հաստատուի...';
+    setAuthButtonLoading(verifyBtn, true);
 
     try {
         const { data, error } = await sb.auth.verifyOtp({
@@ -257,9 +274,6 @@ async function verifyEmailCode(email, code) {
             token: code,
             type: 'signup'
         });
-
-        verifyBtn.disabled = false;
-        verifyBtn.textContent = 'Հաստատել';
 
         if (error) {
             showToast('Հաստատումը ձախողեցաւ: Սխալ կամ ժամկէտանց կոտ:', 'error');
@@ -270,9 +284,9 @@ async function verifyEmailCode(email, code) {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     } catch (err) {
-        verifyBtn.disabled = false;
-        verifyBtn.textContent = 'Հաստատել';
         showToast('System error during verification', 'error');
+    } finally {
+        setAuthButtonLoading(verifyBtn, false);
     }
 }
 
@@ -305,7 +319,7 @@ async function signInWithGoogle() {
 window.updateDashboardUI = function (hasPlayedToday = true) {
     const fireIcon = document.querySelector('.fire-icon-large');
     if (fireIcon) {
-        const source = hasPlayedToday ? 'pics/fire.svg' : 'pics/fire-static.svg';
+        const source = hasPlayedToday ? 'pics/streaks/fire.svg' : 'pics/streaks/fire-static.svg';
         fireIcon.classList.toggle('is-inactive', !hasPlayedToday);
         if (fireIcon.dataset.src !== source && fireIcon.getAttribute('src') !== source) {
             fireIcon.removeAttribute('src');
@@ -394,7 +408,7 @@ function updateUIForUser(user) {
     if (authText) authText.textContent = 'Ելք';
     else authBtn.textContent = 'Ելք';
 
-    setAuthButtonIcon('pics/door.png');
+    setAuthButtonIcon('pics/icons/door.png');
     authBtn.setAttribute('aria-label', 'Ելք');
 
     authBtn.onclick = (e) => {
@@ -432,7 +446,7 @@ function updateUIForGuest() {
         navLink.href = '#about';
         navLink.title = 'Ինչո՞ւ Խաղալ';
         const navIcon = navLink.querySelector('.nav-icon img');
-        if (navIcon) navIcon.src = 'pics/info.png';
+        if (navIcon) navIcon.src = 'pics/icons/info.png';
         navLink.querySelector('.nav-text').textContent = 'Ինչո՞ւ Խաղալ';
     }
 
@@ -440,7 +454,7 @@ function updateUIForGuest() {
     if (authText) authText.textContent = 'Մուտք';
     else authBtn.textContent = 'Մուտք';
 
-    setAuthButtonIcon('pics/profile-0-static.svg');
+    setAuthButtonIcon('pics/profiles/profile-0-static.svg');
     authBtn.setAttribute('aria-label', 'Մուտք');
 
     authBtn.onclick = (e) => {
@@ -460,11 +474,29 @@ function setAuthButtonIcon(source) {
         image.alt = '';
         authIcon.replaceChildren(image);
     }
-    image.classList.toggle('auth-icon-logout', source === 'pics/door.png');
+    image.classList.toggle('auth-icon-logout', source === 'pics/icons/door.png');
     image.src = source;
 }
 
 // Rank functions moved to api.js
+
+function fitDashboardRankName() {
+    const rankName = document.getElementById('dash-rank-name');
+    const rankInfo = rankName && rankName.parentElement;
+    if (!rankName || !rankInfo || rankInfo.clientWidth === 0) return;
+
+    rankName.style.fontSize = '';
+    const baseSize = Number.parseFloat(getComputedStyle(rankName).fontSize);
+    const availableWidth = rankInfo.clientWidth;
+    const textWidth = rankName.scrollWidth;
+
+    if (textWidth > availableWidth) {
+        const fittedSize = Math.max(16, baseSize * (availableWidth - 2) / textWidth);
+        rankName.style.fontSize = `${fittedSize}px`;
+    }
+}
+
+window.addEventListener('resize', fitDashboardRankName);
 
 function renderPersonalDashboard(data) {
     const dashboard = document.getElementById('personal-dashboard');
@@ -478,7 +510,7 @@ function renderPersonalDashboard(data) {
         navLink.href = '#personal-dashboard';
         navLink.title = 'Արդիւնքներդ';
         const navIcon = navLink.querySelector('.nav-icon img');
-        if (navIcon) navIcon.src = 'pics/military-medal.png';
+        if (navIcon) navIcon.src = 'pics/icons/military-medal.png';
         navLink.querySelector('.nav-text').textContent = 'Արդիւնքներդ';
     }
 
@@ -492,8 +524,10 @@ function renderPersonalDashboard(data) {
     const rankInfo = window.getRankDetails(currentXp);
 
     document.getElementById('dash-rank-icon').src = rankInfo.current.badge;
-    document.getElementById('dash-rank-name').textContent = rankInfo.current.name;
-    document.getElementById('dash-rank-name').style.color = rankInfo.current.color;
+    const rankName = document.getElementById('dash-rank-name');
+    rankName.textContent = rankInfo.current.name;
+    rankName.style.color = rankInfo.current.color;
+    fitDashboardRankName();
 
     document.querySelector('.milestone-fill').style.width = `${rankInfo.progress}%`;
     document.querySelector('.milestone-fill').style.backgroundImage = `linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent), linear-gradient(90deg, ${rankInfo.current.color}, ${rankInfo.next.color})`;
@@ -501,7 +535,7 @@ function renderPersonalDashboard(data) {
 
     const hasNextRank = rankInfo.current.name !== rankInfo.next.name;
     const milestoneText = hasNextRank
-        ? `Յաջորդը՝ ${rankInfo.next.name} (${rankInfo.next.xp} XP)`
+        ? `Յաջորդը՝ ${rankInfo.next.name} (${rankInfo.next.xp} Նիշ)`
         : 'Առաւելագոյն Մակարդակ!';
     document.getElementById('dash-next-text').textContent = milestoneText;
     const nextRankBadge = document.getElementById('dash-next-badge');
@@ -546,6 +580,7 @@ function renderPersonalDashboard(data) {
                 const isStale = (effectiveStreak === 0 && calendarStreak > 0);
 
                 if (diffDays >= diffFromActive && diffDays < diffFromActive + calendarStreak) {
+                    dayDiv.style.setProperty('--streak-day-delay', `${(6 - i) * 0.18}s`);
                     if (isStale) {
                         dayDiv.classList.add('stale');
                     } else {
@@ -562,7 +597,7 @@ function renderPersonalDashboard(data) {
         if (streakCard) {
             if (!hasPlayedToday && streak > 0) {
                 streakCard.classList.add('streak-alert');
-                document.querySelector('.dash-hint').innerHTML = '<strong style="color: #ef4444;">ԶԳՈՒՇԱՑՈՒՄ:</strong> Խաղացէ՛ք այսօր ձեր շարքը չկորսնցնելու համար!';
+                document.querySelector('.dash-hint').innerHTML = '<strong class="streak-warning">ԶԳՈՒՇԱՑՈՒՄ:</strong> Խաղացէ՛ք այսօր ձեր շարքը չկորսնցնելու համար!';
             } else {
                 streakCard.classList.remove('streak-alert');
                 document.querySelector('.dash-hint').textContent = 'Պահպանէ՛ շարքդ ամէն օր խաղալով:';
@@ -672,8 +707,7 @@ document.getElementById('name-prompt-form').addEventListener('submit', async (e)
     if (!sb || !currentUser) return;
 
     const submitBtn = e.target.querySelector('button');
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'Կը պահուի...';
+    setAuthButtonLoading(submitBtn, true, 'Կը պահուի');
 
     try {
         // 1. Update the Profiles table (Leaderboard/Stats)
@@ -685,8 +719,6 @@ document.getElementById('name-prompt-form').addEventListener('submit', async (e)
         if (error) {
             console.error('Profile Upsert Error:', error);
             showToast('Սխալ պատահեցաւ անունը պահելու ատեն: ' + error.message, 'error');
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'Հաստատել';
             return;
         }
 
@@ -703,10 +735,10 @@ document.getElementById('name-prompt-form').addEventListener('submit', async (e)
         // Refresh UI
         updateUIForUser(currentUser);
     } catch (err) {
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Հաստատել';
         console.error('System Error:', err);
         showToast('System error: ' + err.message, 'error');
+    } finally {
+        setAuthButtonLoading(submitBtn, false);
     }
 });
 
@@ -870,15 +902,15 @@ if (darkModeToggle) {
     // If explicitly set to false, use light mode. Otherwise default to dark.
     if (savedTheme === 'false') {
         document.body.classList.remove('dark-mode');
-        darkModeToggle.querySelector('img').src = 'pics/night.png';
+        darkModeToggle.querySelector('img').src = 'pics/icons/night.png';
     } else {
         document.body.classList.add('dark-mode');
-        darkModeToggle.querySelector('img').src = 'pics/sun.png';
+        darkModeToggle.querySelector('img').src = 'pics/icons/sun.png';
     }
 
     darkModeToggle.addEventListener('click', () => {
         const isDarkNow = document.body.classList.toggle('dark-mode');
-        darkModeToggle.querySelector('img').src = isDarkNow ? 'pics/sun.png' : 'pics/night.png';
+        darkModeToggle.querySelector('img').src = isDarkNow ? 'pics/icons/sun.png' : 'pics/icons/night.png';
         localStorage.setItem('darkMode', isDarkNow);
     });
 }
@@ -1031,15 +1063,15 @@ async function loadLeaderboard(game = 'total', limit = 5, scoreType = currentLea
         const valueHeader = document.getElementById('leaderboard-value-header');
         if (valueHeader) {
             if (game === 'streak') {
-                valueHeader.innerHTML = '<img class="fire-inline-icon" src="pics/fire-static.svg" alt="" aria-hidden="true">';
+                valueHeader.innerHTML = '<img class="fire-inline-icon leaderboard-streak-header-icon" src="pics/streaks/fire-static.svg" alt="" aria-hidden="true">';
             } else if (currentLeaderboardScoreType !== 'overall') {
                 valueHeader.textContent = game === 'hangman'
                     ? 'Շարք'
                     : currentLeaderboardScoreType === 'typing_speed'
                         ? 'WPM'
-                        : 'Լաւագոյն նիշ';
+                        : 'Նիշ';
             } else {
-                valueHeader.textContent = 'XP';
+                valueHeader.textContent = 'Նիշ';
             }
         }
 
@@ -1068,16 +1100,13 @@ async function loadLeaderboard(game = 'total', limit = 5, scoreType = currentLea
                 const streakIntensity = Math.min(streak * 10, 100);
                 let streakStyle = `style="color: hsl(0, ${streakIntensity}%, 60%); font-weight: 700; text-align: center;"`;
                 if (streak >= 7) streakStyle = `style="color: hsl(0, 100%, 50%); font-weight: 800; text-shadow: 0 0 8px rgba(239, 68, 68, 0.4); text-align: center;"`;
-                valueCell = `<td class="streak-cell" ${streakStyle}><img class="fire-inline-icon" src="pics/fire-static.svg" alt="" aria-hidden="true"> ${streak}</td>`;
+                valueCell = `<td class="streak-cell" ${streakStyle}>${streak}</td>`;
             } else {
                 const isTypingSpeed = game === 'typing' && currentLeaderboardScoreType === 'typing_speed';
                 const scoreIntensity = Math.min((score / (isTypingSpeed ? 300 : 5000)) * 100, 100);
                 let scoreStyle = `style="color: hsl(260, ${scoreIntensity}%, 70%); font-weight: 700; text-align: center;"`;
                 if (score >= (isTypingSpeed ? 300 : 5000)) scoreStyle = `style="color: var(--primary); font-weight: 800; text-shadow: 0 0 10px rgba(139, 92, 246, 0.3); text-align: center;"`;
-                const scoreUnit = currentLeaderboardScoreType === 'overall'
-                    ? ' <small>XP</small>'
-                    : isTypingSpeed ? ' <small>WPM</small>' : '';
-                valueCell = `<td class="score-cell" ${scoreStyle}>${score}${scoreUnit}</td>`;
+                valueCell = `<td class="score-cell" ${scoreStyle}>${score}</td>`;
             }
 
             html += `<tr class="${rankClass}">

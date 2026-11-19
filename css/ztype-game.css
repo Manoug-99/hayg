@@ -147,7 +147,7 @@ body {
 
 .hud-btn:hover {
     border-color: var(--neon-cyan);
-    box-shadow: 0 0 12px rgba(0, 229, 255, 0.3);
+    box-shadow: none;
 }
 
 /* ===== Word Target Display ===== */
@@ -258,7 +258,7 @@ body {
 
 .menu-back-btn:hover {
     border-color: var(--neon-cyan);
-    box-shadow: 0 0 12px rgba(0, 229, 255, 0.3);
+    box-shadow: none;
 }
 
 .game-title {
@@ -306,7 +306,7 @@ body {
 
 .action-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 28px rgba(0, 229, 255, 0.5);
+    box-shadow: none;
 }
 
 .action-btn:active {
@@ -643,7 +643,11 @@ body {
     border-bottom: 2px solid var(--neon-cyan);
 }
 
-#start-menu .custom-select-trigger.ztype-select:hover,
+#start-menu .custom-select-trigger.ztype-select:hover {
+    border-color: var(--neon-cyan);
+    box-shadow: none;
+}
+
 #start-menu .custom-select-trigger.ztype-select[aria-expanded="true"] {
     border-color: var(--neon-cyan);
     box-shadow: 0 0 18px rgba(0, 229, 255, 0.16);

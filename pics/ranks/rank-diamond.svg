@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <defs>
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="1"/>
+      <feOffset dx="2.5" dy="3.5"/>
+      <feComponentTransfer><feFuncA type="linear" slope=".45"/></feComponentTransfer>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <path d="M64 8 L111 25 V62 C111 88 91 107 64 120 C37 107 17 88 17 62 V25 Z" fill="#25BDEB" stroke="#075985" stroke-width="7" stroke-linejoin="round"/>
+  <path d="M64 19 L99 32 V61 C99 82 84 97 64 108 C44 97 29 82 29 61 V32 Z" fill="#8BE6FF"/>
+  <path d="M35 36 L61 26" stroke="#D7F9FF" stroke-width="5" stroke-linecap="round"/>
+  <text x="64" y="82" text-anchor="middle" font-family="Noto Sans Armenian, Segoe UI, sans-serif" font-size="57" font-weight="bold" fill="#F0FDFF" stroke="#075985" stroke-width="1" paint-order="stroke" filter="url(#shadow)">Գ</text>
+</svg>

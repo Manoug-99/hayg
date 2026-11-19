@@ -4,7 +4,7 @@ const darkModeToggle = document.getElementById('dark-mode-toggle');
 function setDarkMode(enabled) {
     body.classList.toggle('dark-mode', enabled);
     if (darkModeToggle) {
-        darkModeToggle.querySelector('img').src = enabled ? 'pics/sun.png' : 'pics/night.png';
+        darkModeToggle.querySelector('img').src = enabled ? 'pics/icons/sun.png' : 'pics/icons/night.png';
     }
     localStorage.setItem('darkMode', enabled);
 }
